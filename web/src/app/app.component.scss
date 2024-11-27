@@ -1,0 +1,6 @@
+app-whatsapp {
+  position: fixed;
+  bottom: 20px; /* Espacio desde el borde inferior */
+  right: 20px; /* Espacio desde el borde derecho */
+  z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+}
