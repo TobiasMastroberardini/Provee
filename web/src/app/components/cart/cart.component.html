@@ -5,7 +5,10 @@
     <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
         <div class="space-y-6" *ngFor="let item of cartItems">
-          <app-card-cart [item]="item"></app-card-cart>
+          <app-card-cart
+            [product]="item.productDetails"
+            [item]="item"
+          ></app-card-cart>
         </div>
         <div *ngIf="cartItems.length < 1">
           <p>Carrito vacio</p>

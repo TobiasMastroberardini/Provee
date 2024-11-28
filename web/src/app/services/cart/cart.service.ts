@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,22 +12,22 @@ export class CartService {
 
   // Obtener los items del carrito por ID de carrito
   getCartItems(cartId: string): Observable<any[]> {
-    return this.http.get<any>(`${this.baseUrl}/${cartId}/items`).pipe(
-      map((response) => response.items || []) // Extrae los items, o devuelve un array vacío si no existen
-    );
+    return this.http.get<any>(`${this.baseUrl}/${cartId}/items`);
   }
 
   addToCart(
     cartId: number,
     productId: number,
     quantity: number,
-    price: number
+    price: number,
+    name: string
   ): Observable<any> {
     const payload = {
       cart_id: cartId,
       product_id: productId,
       quantity,
       price,
+      name,
     };
     console.log('Payload enviado al backend:', payload); // Para verificar el formato antes de enviar
     return this.http.post<any>(`${this.baseUrl}/add`, payload);

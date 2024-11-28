@@ -19,14 +19,19 @@ export class ProductCardComponent {
     const cartId = 1; // ID del carrito (puedes obtenerlo dinámicamente si es necesario)
     const quantity = 1; // Cantidad predeterminada
     const price = product.precio; // Precio del producto (asegúrate de que exista en los datos)
+    const name = product.nombre;
+    const id = product.id;
 
-    this.cartService.addToCart(cartId, product.id, quantity, price).subscribe(
+    this.cartService.addToCart(cartId, id, quantity, price, name).subscribe(
       (response) => {
         console.log('Producto agregado al carrito:', response);
         alert('Producto agregado exitosamente');
       },
       (error) => {
-        console.error('Error al agregar producto al carrito:', error);
+        console.error(
+          'Error en la tarjeta al agregar producto al carrito:',
+          error
+        );
       }
     );
   }

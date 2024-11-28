@@ -112,7 +112,7 @@ class CartController {
       if (items.length === 0) {
         return res.status(404).json({ message: "No se encontraron items" });
       }
-      return res.json({ items });
+      return res.json(items);
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: "Error para obtener items" });

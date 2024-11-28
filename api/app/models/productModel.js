@@ -4,8 +4,21 @@ class Product {
   // Obtener todos los productos
   static async getAllProducts() {
     try {
-      const [rows] = await db.query("SELECT * FROM products");
-      return rows; // Devuelve los productos
+      // Consulta para obtener todos los productos
+      const [products] = await db.query("SELECT * FROM products");
+
+      // Consulta para obtener todas las imágenes
+      const [images] = await db.query("SELECT * FROM product_images");
+
+      // Añadir imágenes a sus productos correspondientes
+      const productsWithImages = products.map((product) => {
+        const productImages = images
+          .filter((image) => image.product_id === product.id)
+          .map((image) => image.image_url);
+        return { ...product, images: productImages };
+      });
+
+      return productsWithImages; // Devuelve los productos con sus imágenes
     } catch (error) {
       throw error; // Propaga el error al controlador
     }
@@ -14,10 +27,29 @@ class Product {
   // Obtener un producto por su ID
   static async getProductById(id) {
     try {
-      const [rows] = await db.query("SELECT * FROM products WHERE id = ?", [
-        id,
-      ]);
-      return rows[0]; // Devuelve el primer resultado o undefined si no existe
+      // Consulta para obtener el producto
+      const [productRows] = await db.query(
+        "SELECT * FROM products WHERE id = ?",
+        [id]
+      );
+
+      // Si no se encuentra el producto, devolver undefined
+      if (productRows.length === 0) {
+        return undefined;
+      }
+
+      const product = productRows[0];
+
+      // Consulta para obtener las imágenes del producto
+      const [imageRows] = await db.query(
+        "SELECT imagen_url FROM product_images WHERE product_id = ?",
+        [id]
+      );
+
+      // Añadir las imágenes al producto
+      product.images = imageRows.map((row) => row.image_url);
+
+      return product; // Devuelve el producto con las imágenes asociadas
     } catch (error) {
       throw error;
     }
