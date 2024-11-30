@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { CartService } from '../../services/cart/cart.service';
 import { ProductService } from '../../services/products/product.service';
 import { CardCartComponent } from '../card-cart/card-cart.component';
@@ -9,10 +10,12 @@ import { CardCartComponent } from '../card-cart/card-cart.component';
   standalone: true,
   imports: [CardCartComponent, CommonModule],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.scss',
+  styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent implements OnInit {
-  cartItems: any[] = []; // Aquí se almacenarán los items del carrito
+  cartItems: any[] = [];
+  total: number = 0;
+  loading: boolean = true;
 
   constructor(
     private cartService: CartService,
@@ -20,33 +23,46 @@ export class CartComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cartId = '1'; // ID del carrito (puedes obtenerlo dinámicamente)
+    const cartId = '1'; // Cambia esto a la forma en que obtienes el ID del carrito
 
     this.cartService.getCartItems(cartId).subscribe(
       (items) => {
-        this.cartItems = [];
+        const productObservables = items.map((item: any) =>
+          this.productService
+            .getProductById(item.product_id)
+            .toPromise()
+            .then((product) => ({
+              ...item,
+              productDetails: product,
+            }))
+        );
 
-        // Para cada ítem, obtener los detalles del producto
-        items.forEach((item: any) => {
-          this.productService.getProductById(item.product_id).subscribe(
-            (product) => {
-              this.cartItems.push({
-                ...item,
-                productDetails: product, // Añadir detalles del producto al ítem
-              });
-            },
-            (error) => {
-              console.error(
-                `Error al obtener detalles del producto con ID ${item.product_id}:`,
-                error
-              );
-            }
-          );
-        });
+        forkJoin(productObservables).subscribe(
+          (productsWithDetails) => {
+            this.cartItems = productsWithDetails;
+            this.calculateTotal();
+            this.loading = false;
+          },
+          (error) => {
+            console.error('Error al obtener detalles del producto:', error);
+          }
+        );
       },
       (error) => {
         console.error('Error al obtener los items del carrito:', error);
       }
+    );
+  }
+
+  onItemDeleted(itemId: string): void {
+    this.cartItems = this.cartItems.filter((item) => item.id !== itemId); // Actualizar la lista de ítems
+    this.calculateTotal(); // Actualizar el total
+  }
+
+  private calculateTotal(): void {
+    this.total = this.cartItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
     );
   }
 }

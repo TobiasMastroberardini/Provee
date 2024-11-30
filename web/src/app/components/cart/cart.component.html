@@ -1,17 +1,19 @@
-<section class="bg-gray-100 py-8 antialiasedmd:py-16">
+<section class="bg-gray-100 py-8 antialiased md:py-16">
   <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <h2 class="text-xl font-semibold text-gray-900 sm:text-2xl">Carrito</h2>
 
     <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+        <div *ngIf="loading" class="text-center"><p>Cargando...</p></div>
         <div class="space-y-6" *ngFor="let item of cartItems">
           <app-card-cart
             [product]="item.productDetails"
             [item]="item"
+            (itemDeleted)="onItemDeleted(item.id)"
           ></app-card-cart>
         </div>
-        <div *ngIf="cartItems.length < 1">
-          <p>Carrito vacio</p>
+        <div *ngIf="cartItems.length < 1 && !loading">
+          <p>Carrito vacío</p>
         </div>
       </div>
 
@@ -26,13 +28,15 @@
               class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700"
             >
               <dt class="text-base font-bold text-gray-900">Total</dt>
-              <dd class="text-base font-bold text-gray-900">$8,191.00</dd>
+              <dd class="text-base font-bold text-gray-900">
+                ${{ total | number : "1.2-2" }}
+              </dd>
             </dl>
           </div>
 
           <a
             href="#"
-            class="flex w-full items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-primary-300 back-color"
+            class="flex w-full items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-primary-300"
             >Finalizar compra</a
           >
 
@@ -41,7 +45,7 @@
             <a
               href="products"
               title=""
-              class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline letter-color"
+              class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline"
             >
               Seguir comprando
               <svg

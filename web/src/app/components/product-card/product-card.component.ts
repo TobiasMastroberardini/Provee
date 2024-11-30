@@ -25,7 +25,6 @@ export class ProductCardComponent {
     this.cartService.addToCart(cartId, id, quantity, price, name).subscribe(
       (response) => {
         console.log('Producto agregado al carrito:', response);
-        alert('Producto agregado exitosamente');
       },
       (error) => {
         console.error(
