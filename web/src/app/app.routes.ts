@@ -6,6 +6,7 @@ import { LoginComponent } from './components/login/login.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ProductCardComponent } from './components/product-card/product-card.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
+import { ProductTableComponent } from './components/prooduct-table/prooduct-table.component';
 import { RecoveryPassComponent } from './components/recovery-pass/recovery-pass.component';
 import { SingupComponent } from './components/singup/singup.component';
 
@@ -18,6 +19,10 @@ export const routes: Routes = [
   {
     path: 'product-info',
     component: ProductCardComponent,
+  },
+  {
+    path: 'product-table',
+    component: ProductTableComponent,
   },
   {
     path: 'home',

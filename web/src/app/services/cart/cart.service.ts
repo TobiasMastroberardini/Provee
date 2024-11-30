@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, tap } from 'rxjs';
+import { catchError, Observable, of, Subject, tap } from 'rxjs';
+import { AlertService } from '../alert/alert.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +12,7 @@ export class CartService {
   // Subject para eventos de éxito
   private alertSuccessSubject = new Subject<string>();
 
-  constructor(private http: HttpClient) {}
-
-  // Observable que los componentes pueden suscribirse
-  getAlertSuccessObservable(): Observable<string> {
-    return this.alertSuccessSubject.asObservable();
-  }
+  constructor(private http: HttpClient, private alertService: AlertService) {}
 
   // Obtener los items del carrito por ID de carrito
   getCartItems(cartId: string): Observable<any[]> {
@@ -43,7 +39,12 @@ export class CartService {
     return this.http.post<any>(`${this.baseUrl}/add`, payload).pipe(
       tap((response) => {
         // Si se agrega correctamente, emitimos un mensaje de éxito
-        this.alertSuccessSubject.next('Item added to cart successfully!');
+        this.alertService.showAlert('Producto agregado al carrito');
+      }),
+      catchError((error) => {
+        this.alertService.showAlert('Producto agregado al carrito');
+        console.error(error);
+        return of(null);
       })
     );
   }
