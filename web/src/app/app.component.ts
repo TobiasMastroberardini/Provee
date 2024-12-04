@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AlertSuccessComponent } from './components/alert-success/alert-success.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { WhatsappComponent } from './components/whatsapp/whatsapp.component';
+import { AuthService } from './services/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,11 @@ import { WhatsappComponent } from './components/whatsapp/whatsapp.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title = 'web';
-  alertMessage: string = 'Your cart was updated!';
+export class AppComponent implements OnInit {
+  title = 'Provee';
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.authService.initializeUser(); // Inicia la autenticación al cargar la aplicación
+  }
 }

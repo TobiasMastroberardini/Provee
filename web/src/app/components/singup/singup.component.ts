@@ -10,24 +10,34 @@ import { AuthService } from '../../services/auth/auth.service';
   styleUrls: ['./singup.component.scss'],
 })
 export class SingupComponent {
-  user = {
-    nombre: '',
-    email: '',
-    telefono: '',
-    direccion: '',
-    pass: '',
-  };
+  // Propiedades para almacenar los datos del formulario
+  nombre = '';
+  email = '';
+  telefono = '';
+  direccion = '';
+  password = '';
 
   constructor(private authService: AuthService) {}
 
-  register() {
-    console.log('llego');
-    const { nombre, email, telefono, direccion, pass } = this.user;
-
-    if (nombre && email && telefono && direccion && pass) {
-      this.authService.register(nombre, email, telefono, direccion, pass);
-    } else {
-      alert('Por favor complete todos los campos.');
-    }
+  // Método para manejar el registro del usuario
+  onRegister() {
+    this.authService
+      .register(
+        this.nombre,
+        this.email,
+        this.telefono,
+        this.direccion,
+        this.password
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Registro exitoso:', response);
+          // Aquí puedes manejar una redirección o mostrar un mensaje
+        },
+        error: (error) => {
+          console.error('Error en el registro:', error);
+          // Aquí puedes mostrar un mensaje de error al usuario
+        },
+      });
   }
 }

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of, Subject, tap } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
 
 @Injectable({
@@ -8,49 +8,72 @@ import { AlertService } from '../alert/alert.service';
 })
 export class CartService {
   private baseUrl = 'http://localhost:3005/api/carts';
-
-  // Subject para eventos de éxito
-  private alertSuccessSubject = new Subject<string>();
+  public userId: string | null = null; // ID del usuario
 
   constructor(private http: HttpClient, private alertService: AlertService) {}
 
-  // Obtener los items del carrito por ID de carrito
-  getCartItems(cartId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/${cartId}/items`);
+  // Obtener los items del carrito
+  getCartItems(): Observable<any[]> {
+    if (this.userId) {
+      return this.http.get<any[]>(`${this.baseUrl}/${this.userId}/items`).pipe(
+        tap((items) => console.log('Items del carrito obtenidos:', items)),
+        catchError((error) => {
+          console.error('Error obteniendo items del carrito:', error);
+          return of([]);
+        })
+      );
+    } else {
+      console.warn('No hay cartId disponible.');
+      return of([]);
+    }
   }
 
+  // Agregar un producto al carrito
   addToCart(
-    cartId: number,
     productId: number,
     quantity: number,
     price: number,
     name: string
   ): Observable<any> {
+    if (!this.userId) {
+      console.error('Error: userId no está definido');
+      return of(null); // Devuelve null si no hay userId
+    }
+
     const payload = {
-      cart_id: cartId,
+      userId: this.userId, // Enviar el userId
       product_id: productId,
       quantity,
       price,
       name,
     };
-    console.log('Payload enviado al backend:', payload); // Para verificar el formato antes de enviar
 
-    // Hacemos la petición
+    console.log('Payload enviado al backend:', payload);
+
     return this.http.post<any>(`${this.baseUrl}/add`, payload).pipe(
-      tap((response) => {
-        // Si se agrega correctamente, emitimos un mensaje de éxito
+      tap(() => {
         this.alertService.showAlert('Producto agregado al carrito');
       }),
       catchError((error) => {
-        this.alertService.showAlert('Producto agregado al carrito');
+        this.alertService.showAlert('Error al agregar el producto al carrito');
         console.error(error);
         return of(null);
       })
     );
   }
 
-  // Cambiado para aceptar el cartId y el itemId
-  deleteFromCart(cartId: string, itemId: string): Observable<any> {
-    return this.http.delete<any>(`${this.baseUrl}/${itemId}/items/`);
+  // Eliminar un producto del carrito
+  deleteFromCart(itemId: string): Observable<any> {
+    if (!this.userId) {
+      console.error('No se puede eliminar porque no se obtuvo el cartId.');
+      return of(null); // Devuelve null si no hay cartId
+    }
+    return this.http.delete<any>(`${this.baseUrl}/${itemId}/items`).pipe(
+      tap(() => console.log('Item eliminado del carrito:', itemId)),
+      catchError((error) => {
+        console.error('Error al eliminar item del carrito:', error);
+        return of(null);
+      })
+    );
   }
 }

@@ -25,7 +25,7 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
     const cartId = '1'; // Cambia esto a la forma en que obtienes el ID del carrito
 
-    this.cartService.getCartItems(cartId).subscribe(
+    this.cartService.getCartItems().subscribe(
       (items) => {
         const productObservables = items.map((item: any) =>
           this.productService

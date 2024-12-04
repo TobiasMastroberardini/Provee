@@ -1,4 +1,6 @@
-import { Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './auth/auth.guard';
 import { CartComponent } from './components/cart/cart.component';
 import { CreateProductComponent } from './components/create-product/create-product.component';
 import { HomeComponent } from './components/home/home.component';
@@ -27,6 +29,7 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'products',
@@ -35,6 +38,7 @@ export const routes: Routes = [
   {
     path: 'cart',
     component: CartComponent,
+    canActivate: [AuthGuard], // Puedes agregar el guard aquí si es necesario
   },
   {
     path: 'login',
@@ -51,9 +55,16 @@ export const routes: Routes = [
   {
     path: 'create-product',
     component: CreateProductComponent,
+    canActivate: [AuthGuard], // Proteger esta ruta también si es necesario
   },
   {
     path: '**', // Ruta para manejar URLs no encontradas
     component: NotFoundComponent,
   },
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {} // Asegúrate de exportar tu módulo de enrutamiento

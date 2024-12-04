@@ -21,7 +21,7 @@ export class CardCartComponent {
     const itemId = item.id;
 
     // Eliminar el ítem del carrito
-    this.cartService.deleteFromCart(item.cart_id, itemId).subscribe(
+    this.cartService.deleteFromCart(itemId).subscribe(
       (response) => {
         console.log('Producto eliminado del carrito:', response);
         this.itemDeleted.emit(itemId); // Emitir el ID del ítem eliminado al componente padre

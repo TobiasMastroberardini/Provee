@@ -28,13 +28,29 @@ class CartController {
   static async getByUserId(req, res) {
     const { id } = req.params;
     try {
-      const cart = await Cart.getCartByuserId(id);
+      const userId = await Cart.getIdCartByUserId(id);
+      const cart = await Cart.getCartByuserId(userId);
       if (cart.length === 0) {
         return res.status(404).json({ message: "Carrito no encontrado" });
       }
       return res.json(cart[0]);
     } catch (error) {
       return req.status(500).json({ error: "Error al obtener carrito" });
+    }
+  }
+
+  static async getIdCartByUser(req, res) {
+    const { id } = req.params; // Obtener el ID del usuario desde los parámetros de la solicitud
+    try {
+      const cart = await Cart.getIdCartByUserId(id); // Obtener el carrito por ID de usuario
+      if (cart.length === 0) {
+        return res.sendStatus(404); // Enviar 404 si no hay carrito
+      }
+
+      // Enviar el ID del carrito encontrado como un número, en lugar de un JSON
+      return res.send(cart[0].id.toString()); // Enviar el ID como respuesta (convertido a string)
+    } catch (error) {
+      return res.status(500).json({ error: "Error al obtener carrito" }); // Enviar 500 en caso de error
     }
   }
 
@@ -79,9 +95,29 @@ class CartController {
   }
 
   static async addCartItem(req, res) {
-    const newItem = req.body;
+    const { product_id, quantity, price, name, userId } = req.body;
     try {
+      // Obtener el cartId usando el userId
+      const cart = await Cart.getIdCartByUserId(userId);
+      if (!cart || cart.length === 0) {
+        return res.status(404).json({ message: "Carrito no encontrado" });
+      }
+
+      const cartId = cart[0].id;
+
+      // Preparar el nuevo item para agregar
+      const newItem = {
+        cart_id: cartId,
+        product_id,
+        quantity,
+        price,
+        name,
+      };
+
+      // Agregar el producto al carrito
       const result = await Cart.addCartItem(newItem);
+
+      // Responder con el nuevo item
       return res.status(201).json({ id: result.insertId, ...newItem });
     } catch (error) {
       console.error(error);
@@ -106,16 +142,64 @@ class CartController {
   }
 
   static async getCartItems(req, res) {
-    const { id } = req.params;
+    const { id } = req.params; // ID del usuario
     try {
-      const items = await Cart.getCartItems(id);
-      if (items.length === 0) {
-        return res.status(404).json({ message: "No se encontraron items" });
+      // Obtener el cartId usando el userId
+      const cart = await Cart.getIdCartByUserId(id);
+      if (!cart || cart.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Carrito no encontrado para este usuario" });
       }
+
+      const cartId = cart[0].id; // Suponiendo que 'cart' es un array, accedemos al primer elemento.
+
+      // Obtener los items del carrito usando el cartId
+      const items = await Cart.getCartItems(cartId);
+
+      // Verificar si el carrito tiene items
+      if (items.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No se encontraron items en el carrito" });
+      }
+
+      // Enviar los items encontrados
       return res.json(items);
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ error: "Error para obtener items" });
+      return res
+        .status(500)
+        .json({ error: "Error al obtener los items del carrito" });
+    }
+  }
+
+  static async getItemByProductId(req, res) {
+    const { id } = req.params;
+    try {
+      const item = await Cart.getItemByProductId(id);
+      if (item.length === 0) {
+        return res.status(400).json({ message: "No se encontro item" });
+      }
+      return res.json(item);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: "Error para obtener item" });
+    }
+  }
+
+  static async updateItems(req, res) {
+    const { id } = req.params;
+    const updatedData = req.body;
+    try {
+      const result = await Cart.updateItems(id, updatedData);
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Item no encontrado" });
+      }
+      return res.json({ message: "Item actualizado" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Error al actualizar el item" });
     }
   }
 }

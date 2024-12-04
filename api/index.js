@@ -6,6 +6,7 @@ const productRoutes = require("./app/routes/productRoutes");
 const orderRoutes = require("./app/routes/orderRoutes");
 const cartRoutes = require("./app/routes/cartRoutes");
 const authRoutes = require("./app/routes/authRoute");
+require("dotenv").config();
 
 const app = express();
 app.use(bodyParser.json());

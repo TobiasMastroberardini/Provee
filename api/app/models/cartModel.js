@@ -19,6 +19,17 @@ class Cart {
     }
   }
 
+  static async getIdCartByUserId(user_id) {
+    try {
+      const [rows] = await db.query("SELECT id FROM cart WHERE user_id = ?", [
+        user_id,
+      ]);
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getCartByuserId(id) {
     try {
       const [rows] = await db.query("SELECT * FROM cart WHERE user_id = ?", [
@@ -87,6 +98,30 @@ class Cart {
         [id]
       );
       return rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getItemByProductId(id) {
+    try {
+      const [rows] = await db.query(
+        "SELECR * FROM cart_items WHERE product_id = ? ",
+        [id]
+      );
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async updateItems(id) {
+    try {
+      const [result] = await db.query("UPDATE cart_items SET ? WHERE id = ?", [
+        data,
+        id,
+      ]);
+      return result;
     } catch (error) {
       throw error;
     }

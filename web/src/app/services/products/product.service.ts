@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
+import { AlertService } from '../alert/alert.service';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ import { Observable } from 'rxjs';
 export class ProductService {
   private baseUrl = 'http://localhost:3005/api/products'; // Reemplaza con tu URL de API real
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private alertService: AlertService) {}
 
   // Método para obtener todos los productos
   getProducts(): Observable<any> {
@@ -21,8 +22,34 @@ export class ProductService {
   }
 
   // Método para crear un nuevo producto
-  createProduct(product: any): Observable<any> {
-    return this.http.post<any>(this.baseUrl, product);
+  createProduct(
+    nombre: string,
+    precio: number,
+    descripcion: string,
+    estado: string,
+    cantidad_disponible: number,
+    categoria: number
+  ): Observable<any> {
+    const product = {
+      nombre,
+      precio,
+      descripcion,
+      cantidad_disponible,
+      categoria_id: categoria,
+      estado,
+    };
+    console.log(product);
+    return this.http.post<any>(this.baseUrl, product).pipe(
+      tap((response) => {
+        // Si se agrega correctamente, emitimos un mensaje de éxito
+        this.alertService.showAlert('Producto agregado correctamente');
+      }),
+      catchError((error) => {
+        this.alertService.showAlert('Producto no agregado');
+        console.error(error);
+        return of(null);
+      })
+    );
   }
 
   // Método para actualizar un producto existente
