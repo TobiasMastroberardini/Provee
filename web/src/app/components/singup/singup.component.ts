@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms'; // Required for two-way data binding
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
@@ -17,27 +18,21 @@ export class SingupComponent {
   direccion = '';
   password = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   // Método para manejar el registro del usuario
-  onRegister() {
-    this.authService
-      .register(
-        this.nombre,
-        this.email,
-        this.telefono,
-        this.direccion,
-        this.password
-      )
-      .subscribe({
-        next: (response) => {
-          console.log('Registro exitoso:', response);
-          // Aquí puedes manejar una redirección o mostrar un mensaje
-        },
-        error: (error) => {
-          console.error('Error en el registro:', error);
-          // Aquí puedes mostrar un mensaje de error al usuario
-        },
-      });
+  register() {
+    const user = {
+      nombre: this.nombre,
+      email: this.email,
+      telefono: this.telefono,
+      direccion: this.direccion,
+      password: this.password,
+    };
+    console.log(user);
+    this.authService.register(user).subscribe((data) => {
+      this.authService.setToken(data.token);
+    });
+    this.router.navigateByUrl('/login');
   }
 }

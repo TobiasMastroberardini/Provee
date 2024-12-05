@@ -22,26 +22,15 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.authService.login(this.email, this.password).subscribe({
-      next: (response) => {
-        if (response) {
-          console.log('Login exitoso', response);
-
-          // Almacena el token en localStorage
-          localStorage.setItem('authToken', response.token);
-
-          // Inicializa el usuario en el servicio de autenticación
-          this.authService.initializeUser();
-
-          // Redirige a la página principal
-          this.router.navigate(['/home']);
-          this.alertService.showAlert('Has iniciado sesión exitosamente');
-        }
+    const user = { email: this.email, password: this.password };
+    this.authService.login(user).subscribe(
+      (data) => {
+        this.authService.setToken(data.token);
+        this.router.navigateByUrl('/');
       },
-      error: (error) => {
-        console.error('Error en el login', error);
-        this.alertService.showAlert('Hubo un problema al iniciar sesión');
-      },
-    });
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 }
