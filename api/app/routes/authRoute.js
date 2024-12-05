@@ -14,4 +14,6 @@ router.post("/logout", authMiddleware.verifyToken, Auth.logout); // Asegúrate d
 // Ruta protegida
 // router.get("/protected", authMiddleware.verifyToken, Auth.protected); // Proteger la ruta
 
+router.get("/token", authMiddleware.verifyToken, Auth.getUserLogged);
+
 module.exports = router;

@@ -114,6 +114,22 @@ class Auth {
       userId: req.userId,
     });
   }
+
+  static async getUserLogged(req, res) {
+    try {
+      const userId = req.userId; // Se obtiene del middleware
+      const user = await userModel.getUserById(userId); // Busca el usuario por su ID
+
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      res.json(user); // Devuelve el usuario
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error al obtener el usuario" });
+    }
+  }
 }
 
 module.exports = Auth;
