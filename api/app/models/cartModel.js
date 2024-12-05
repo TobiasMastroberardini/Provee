@@ -115,15 +115,32 @@ class Cart {
     }
   }
 
-  static async updateItems(id) {
+  static async updateItems(id, quantity) {
+    // Validaciones simples
+    if (isNaN(id) || isNaN(quantity) || quantity < 0) {
+      throw new Error(
+        "ID y Cantidad deben ser números válidos y la cantidad no puede ser negativa"
+      );
+    }
+
     try {
-      const [result] = await db.query("UPDATE cart_items SET ? WHERE id = ?", [
-        data,
-        id,
-      ]);
-      return result;
+      // Ejecutar la consulta de actualización
+      const [result] = await db.query(
+        "UPDATE cart_items SET quantity = ? WHERE id = ?",
+        [quantity, id] // Asegúrate de utilizar "quantity" aquí
+      );
+
+      // Retornar resultado de la operación
+      if (result.affectedRows === 0) {
+        throw new Error(`No se encontró el item con ID ${id}`);
+      }
+
+      return result; // Aquí podrías devolver quizás un éxito o el resultado de la operación
     } catch (error) {
-      throw error;
+      console.error("Error al actualizar el item del carrito:", error);
+      throw new Error(
+        "Fallo al actualizar la cantidad del item, por favor intenta de nuevo"
+      );
     }
   }
 }

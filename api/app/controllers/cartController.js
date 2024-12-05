@@ -191,15 +191,32 @@ class CartController {
   static async updateItems(req, res) {
     const { id } = req.params;
     const updatedData = req.body;
+
+    // Validación del ID
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID inválido" });
+    }
+
+    // Validación de datos actualizados, por ejemplo asegurando que hay un campo "quantity"
+    if (typeof updatedData.quantity !== "number" || updatedData.quantity < 0) {
+      return res
+        .status(400)
+        .json({ message: "Cantidad debe ser un número no negativo" });
+    }
+
     try {
-      const result = await Cart.updateItems(id, updatedData);
+      const result = await Cart.updateItems(id, updatedData.quantity);
+
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Item no encontrado" });
       }
-      return res.json({ message: "Item actualizado" });
+
+      return res.json({ message: "Item actualizado", data: updatedData });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "Error al actualizar el item" });
+      console.error("Error al actualizar item:", error);
+      return res.status(500).json({
+        error: "Error interno del servidor. No se pudo actualizar el item.",
+      });
     }
   }
 }
