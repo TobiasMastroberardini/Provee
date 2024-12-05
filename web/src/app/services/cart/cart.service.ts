@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service'; // Importar CookieService
 import {
   BehaviorSubject,
   catchError,
@@ -10,6 +9,7 @@ import {
   tap,
 } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,21 +21,22 @@ export class CartService {
   constructor(
     private http: HttpClient,
     private alertService: AlertService,
-    private cookies: CookieService // Inyectar CookieService
+    private authService: AuthService
   ) {
-    this.loadUserIdFromCookies(); // Cargar el userId desde las cookies al inicializar
+    this.loadUserIdFromAuthService(); // Cargar userId al inicializar
   }
 
-  // Método para cargar userId desde las cookies
-  private loadUserIdFromCookies(): void {
-    const id = this.cookies.get('userId'); // Recuperar el userId de las cookies
-    if (id) {
-      this.setUserId(id); // Establecer el userId en el BehaviorSubject
-    }
+  // Método para cargar userId desde AuthService
+  private loadUserIdFromAuthService(): void {
+    this.authService.getUserLogged().subscribe((user) => {
+      if (user) {
+        this.setUserId(user.id); // Establecer el userId en el BehaviorSubject
+      }
+    });
   }
 
-  // Obtener los items del carrito
-  getCartItems() {
+  // Obtener los elementos del carrito
+  getCartItems(): Observable<any[]> {
     return this.userId$.pipe(
       switchMap((userId) => {
         if (!userId) {
@@ -93,12 +94,38 @@ export class CartService {
     );
   }
 
+  // Método para actualizar la cantidad de un ítem en el carrito
+  updateQuantity(itemId: string, quantity: number): Observable<any> {
+    const userId = this.userId$.value; // Obtener el valor actual del BehaviorSubject
+
+    if (!userId) {
+      console.error('Error: userId no está definido');
+      return of(null); // Devuelve null si no hay userId
+    }
+
+    const payload = {
+      userId,
+      quantity,
+    };
+
+    return this.http.put<any>(`${this.baseUrl}/items/${itemId}`, payload).pipe(
+      tap(() => {
+        this.alertService.showAlert('Cantidad actualizada');
+      }),
+      catchError((error) => {
+        this.alertService.showAlert('Error al actualizar la cantidad');
+        console.error(error);
+        return of(null);
+      })
+    );
+  }
+
   // Eliminar un producto del carrito
   deleteFromCart(itemId: string): Observable<any> {
     const userId = this.userId$.value; // Obtener el valor actual del BehaviorSubject
 
     if (!userId) {
-      console.error('No se puede eliminar porque no se obtuvo el userId.');
+      console.error('No se puede eliminar porque no ses obtuvo el userId.');
       return of(null); // Devuelve null si no hay userId
     }
 

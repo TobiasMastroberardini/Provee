@@ -59,7 +59,7 @@ export class CartComponent implements OnInit {
     this.calculateTotal(); // Actualizar el total
   }
 
-  private calculateTotal(): void {
+  calculateTotal(): void {
     this.total = this.cartItems.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0

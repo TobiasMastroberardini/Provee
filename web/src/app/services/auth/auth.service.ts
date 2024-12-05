@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
-import { CartService } from '../cart/cart.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +13,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private alertService: AlertService,
-    private cookies: CookieService,
-    private cartService: CartService
+    private cookies: CookieService
   ) {}
 
   // Método para registrar un usuario
@@ -38,13 +36,6 @@ export class AuthService {
       tap((response) => {
         if (response.token) {
           this.setToken(response.token); // Guarda el token en las cookies
-          this.getUserLogged().subscribe((user) => {
-            console.log('Este es el user:', user);
-            if (user) {
-              this.cartService.setUserId(user.id); // Establece el userId en el CartService
-              this.cookies.set('userId', user.id.toString()); // Guarda el userId en cookies
-            }
-          });
           this.alertService.showAlert('Inicio de sesión exitoso');
         }
       }),
@@ -58,10 +49,8 @@ export class AuthService {
 
   // Método para cerrar sesión
   logout(): void {
-    // Limpiar el token y el userId
+    // Limpiar el token
     this.cookies.delete('token'); // Elimina el token de las cookies
-    this.cookies.delete('userId'); // Elimina el userId de las cookies
-    this.cartService.setUserId(''); // Limpia el userId en el CartService
     this.alertService.showAlert('Has cerrado sesión exitosamente'); // Notificación de cierre de sesión
   }
 
@@ -73,10 +62,10 @@ export class AuthService {
     return this.cookies.get('token'); // Recupera el token de las cookies
   }
 
-  getUserLogged() {
+  getUserLogged(): Observable<any> {
     const token = this.getToken();
     if (!token) {
-      console.error('No hay token disponible desde el local');
+      console.error('No hay token disponible');
       return of(null); // Retorna un Observable vacío si no hay token
     }
 
