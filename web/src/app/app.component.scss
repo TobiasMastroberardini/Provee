@@ -4,3 +4,9 @@ app-whatsapp {
   right: 20px; /* Espacio desde el borde derecho */
   z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
 }
+
+.cont {
+  display: grid;
+  min-height: 100dvh;
+  grid-template-rows: auto 1fr auto;
+}

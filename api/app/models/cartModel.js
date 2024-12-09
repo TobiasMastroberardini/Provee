@@ -143,6 +143,17 @@ class Cart {
       );
     }
   }
+
+  static async getCartIdByuserId(user_id) {
+    try {
+      const [rows] = await db.query("SELECT id FROM cart WHERE user_id = ?", [
+        user_id,
+      ]);
+      return rows[0]; // Retorna el primer resultado (el ID del carrito)
+    } catch (error) {
+      throw error; // Maneja errores si la consulta falla
+    }
+  }
 }
 
 module.exports = Cart;

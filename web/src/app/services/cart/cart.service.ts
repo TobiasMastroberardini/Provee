@@ -16,6 +16,8 @@ import { AuthService } from '../auth/auth.service';
 })
 export class CartService {
   private baseUrl = 'http://localhost:3005/api/carts';
+  private baseUrlPay = 'http://localhost:3005/api/payment';
+
   public userId$ = new BehaviorSubject<string | null>(null); // Permitir null
 
   constructor(
@@ -136,5 +138,11 @@ export class CartService {
         return of(null);
       })
     );
+  }
+
+  createPayment(): Observable<any> {
+    const body = { user_id: this.userId$.value };
+    console.log('llego hasta aca');
+    return this.http.post<any>(`${this.baseUrlPay}/new`, body);
   }
 }
