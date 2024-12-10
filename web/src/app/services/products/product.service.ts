@@ -21,6 +21,10 @@ export class ProductService {
     return this.http.get<any>(`${this.baseUrl}/${productId}`);
   }
 
+  getByFilter(filter: string) {
+    return this.http.get<any>(`${this.baseUrl}/filter?${filter}`);
+  }
+
   // Método para crear un nuevo producto
   createProduct(
     nombre: string,

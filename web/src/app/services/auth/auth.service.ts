@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
 
 @Injectable({
@@ -9,6 +9,8 @@ import { AlertService } from '../alert/alert.service';
 })
 export class AuthService {
   private baseUrl = 'http://localhost:3005/api/auth';
+  private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged());
+  isLogged$ = this.isLoggedSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -36,6 +38,7 @@ export class AuthService {
       tap((response) => {
         if (response.token) {
           this.setToken(response.token); // Guarda el token en las cookies
+          this.isLoggedSubject.next(true);
           this.alertService.showAlert('Inicio de sesión exitoso');
         }
       }),
@@ -51,6 +54,7 @@ export class AuthService {
   logout(): void {
     // Limpiar el token
     this.cookies.delete('token'); // Elimina el token de las cookies
+    this.isLoggedSubject.next(false);
     this.alertService.showAlert('Has cerrado sesión exitosamente'); // Notificación de cierre de sesión
   }
 
@@ -79,5 +83,9 @@ export class AuthService {
         return of(null); // Retorna un Observable vacío en caso de error
       })
     );
+  }
+
+  isLogged() {
+    return !!this.getToken();
   }
 }

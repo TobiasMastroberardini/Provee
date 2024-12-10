@@ -34,6 +34,14 @@ export const routes: Routes = [
     component: ProductListComponent,
   },
   {
+    path: 'offers',
+    component: ProductListComponent,
+  },
+  {
+    path: 'products/:name', // :name representa un parámetro dinámico
+    component: ProductListComponent,
+  },
+  {
     path: 'cart',
     component: CartComponent,
   },
