@@ -89,6 +89,35 @@ class Product {
       throw error;
     }
   }
+
+  static async getProductsByCondition(conditions) {
+    try {
+      // Base de la consulta
+      let query = "SELECT * FROM products";
+      const values = [];
+
+      // Añadir condiciones dinámicamente
+      if (Object.keys(conditions).length > 0) {
+        const whereClauses = Object.entries(conditions).map(([key, value]) => {
+          if (key === "nombre") {
+            // Asegurarse de que se agreguen los comodines '%' para una búsqueda parcial
+            values.push(`%${value}%`); // Buscar coincidencias parciales
+            return `${key} LIKE ?`; // Usar LIKE en lugar de '='
+          }
+          values.push(value);
+          return `${key} = ?`;
+        });
+        query += " WHERE " + whereClauses.join(" AND ");
+      }
+
+      // Ejecutar la consulta
+      const [products] = await db.query(query, values);
+
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Product;
