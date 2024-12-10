@@ -21,31 +21,30 @@ export class ProductListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Subscribe to the route URL
     this.route.url.subscribe((urlSegments) => {
       const currentPath = urlSegments.map((segment) => segment.path).join('/');
-      // Verifica si la URL es 'offers' y obtiene los productos en oferta
+
       if (currentPath === 'offers') {
+        console.log('Fetching products on sale');
         this.fetchByFilter('on_sale=1'); // Llama a la función para obtener productos en oferta
-        return;
-      }
-    });
-
-    this.route.params.subscribe((params) => {
-      const name = params['name']; // Obtiene el valor del parámetro 'name'
-      this.productName = name; // Guarda el nombre del producto
-
-      if (name === 'offers') {
-        this.fetchByFilter('on_sale=1'); // Si el nombre es 'offers', obtiene productos en oferta
-      } else if (name) {
-        this.fetchByFilter(`nombre=${name}`); // Llama a la función para obtener productos por nombre
       } else {
-        this.fetchProducts(); // Si no hay parámetro 'name', obtiene todos los productos
+        // Si quieres manejar otras rutas, puedes continuar aquí (opcional)
+        this.route.params.subscribe((params) => {
+          const name = params['name']; // Obtén el parámetro 'name'
+
+          if (name) {
+            this.productName = name; // Guardar el nombre del producto
+            this.fetchByFilter(`nombre=${name}`); // Llamada para obtener productos por nombre
+          } else {
+            this.fetchProducts(); // Si no hay parámetro, obtener todos los productos
+          }
+        });
       }
     });
   }
 
   fetchProducts(): void {
-    // Fetch all products
     this.productService.getProducts().subscribe(
       (data) => {
         this.products = data;
@@ -57,9 +56,9 @@ export class ProductListComponent implements OnInit {
   }
 
   fetchByFilter(filter: string): void {
-    // Fetch products with a filter
     this.productService.getByFilter(filter).subscribe(
       (data) => {
+        console.log(`Fetched products with filter ${filter}:`, data);
         this.products = data;
       },
       (error) => {
