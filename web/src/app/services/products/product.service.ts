@@ -63,7 +63,6 @@ export class ProductService {
   // Método para eliminar un producto
   deleteProduct(productId: number): Observable<any> {
     const token = this.authService.getToken();
-
     if (!token) {
       this.alertService.showAlert('No estás autenticado. Inicia sesión.');
       return of(null); // Si no hay token, no se permite crear el producto
