@@ -31,37 +31,20 @@ export class ProductService {
   }
 
   // Método para crear un nuevo producto
-  createProduct(
-    nombre: string,
-    precio: number,
-    descripcion: string,
-    estado: string,
-    cantidad_disponible: number,
-    categoria: number
-  ): Observable<any> {
+  createProduct(productData: FormData): Observable<any> {
     const token = this.authService.getToken();
 
     if (!token) {
       this.alertService.showAlert('No estás autenticado. Inicia sesión.');
-      return of(null); // Si no hay token, no se permite crear el producto
+      return of(null);
     }
-
-    const product = {
-      nombre,
-      precio,
-      descripcion,
-      cantidad_disponible,
-      categoria_id: categoria,
-      estado,
-    };
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`, // Agrega el token al encabezado
     });
 
-    return this.http.post<any>(this.baseUrl, product, { headers }).pipe(
+    return this.http.post<any>(this.baseUrl, productData, { headers }).pipe(
       tap((response) => {
-        // Si se agrega correctamente, emitimos un mensaje de éxito
         this.alertService.showAlert('Producto agregado correctamente');
       }),
       catchError((error) => {
@@ -79,6 +62,17 @@ export class ProductService {
 
   // Método para eliminar un producto
   deleteProduct(productId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${productId}`);
+    const token = this.authService.getToken();
+
+    if (!token) {
+      this.alertService.showAlert('No estás autenticado. Inicia sesión.');
+      return of(null); // Si no hay token, no se permite crear el producto
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+    });
+
+    return this.http.delete(`${this.baseUrl}/${productId}`, { headers });
   }
 }

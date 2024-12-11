@@ -116,7 +116,21 @@
               Disponible
             </label>
           </div>
-
+          <div>
+            <div>
+              <label
+                for="image"
+                class="block mb-2 text-sm font-medium text-gray-900"
+                >Imagen</label
+              >
+              <input
+                type="file"
+                class="block w-full px-3 py-2 mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-700 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full"
+                (change)="onFileSelected($event)"
+                multiple
+              />
+            </div>
+          </div>
           <div>
             <label
               for="category"

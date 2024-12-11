@@ -30,8 +30,18 @@ class ProductController {
   // Crear un nuevo producto
   static async create(req, res) {
     const newProduct = req.body;
+    const images = req.files; // Archivos subidos
+
     try {
+      // Crear el producto
       const productId = await Product.createProduct(newProduct);
+
+      // Guardar las imágenes si existen
+      if (images && images.length > 0) {
+        const imageUrls = images.map((file) => `/uploads/${file.filename}`);
+        await Product.addProductImages(productId, imageUrls);
+      }
+
       res.status(201).json({ id: productId, ...newProduct });
     } catch (error) {
       console.error("Error al crear el producto:", error);
@@ -43,11 +53,22 @@ class ProductController {
   static async update(req, res) {
     const { id } = req.params;
     const updatedData = req.body;
+    const images = req.files; // Archivos subidos
+
     try {
+      // Actualizar datos del producto
       const affectedRows = await Product.updateProduct(id, updatedData);
+
       if (affectedRows === 0) {
         return res.status(404).json({ message: "Producto no encontrado" });
       }
+
+      // Si hay imágenes nuevas, agregarlas
+      if (images && images.length > 0) {
+        const imageUrls = images.map((file) => `/uploads/${file.filename}`);
+        await Product.addProductImages(id, imageUrls);
+      }
+
       res.status(200).json({ message: "Producto actualizado" });
     } catch (error) {
       console.error("Error al actualizar el producto:", error);

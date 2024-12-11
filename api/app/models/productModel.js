@@ -1,7 +1,6 @@
 const db = require("../../database/database");
 
 class Product {
-  // Obtener todos los productos
   static async getAllProducts() {
     try {
       // Consulta para obtener todos los productos
@@ -14,7 +13,7 @@ class Product {
       const productsWithImages = products.map((product) => {
         const productImages = images
           .filter((image) => image.product_id === product.id)
-          .map((image) => image.image_url);
+          .map((image) => image.imagen_url); // Cambia a imagen_url
         return { ...product, images: productImages };
       });
 
@@ -24,7 +23,7 @@ class Product {
     }
   }
 
-  // Obtener un producto por su ID
+  // Y en el método getProductById
   static async getProductById(id) {
     try {
       // Consulta para obtener el producto
@@ -43,23 +42,34 @@ class Product {
       // Consulta para obtener las imágenes del producto
       const [imageRows] = await db.query(
         "SELECT imagen_url FROM product_images WHERE product_id = ?",
-        [id]
+        [id] // Cambiado de product_id a id
       );
 
       // Añadir las imágenes al producto
-      product.images = imageRows.map((row) => row.image_url);
+      product.images = imageRows.map((row) => row.imagen_url); // Cambia a imagen_url
 
       return product; // Devuelve el producto con las imágenes asociadas
     } catch (error) {
       throw error;
     }
   }
-
   // Crear un producto nuevo
   static async createProduct(data) {
     try {
       const [result] = await db.query("INSERT INTO products SET ?", data);
       return result.insertId; // Devuelve el ID del nuevo producto
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async addProductImages(productId, imageUrls) {
+    try {
+      const values = imageUrls.map((url) => [productId, url]);
+      await db.query(
+        "INSERT INTO product_images (product_id, imagen_url) VALUES ?",
+        [values]
+      );
     } catch (error) {
       throw error;
     }

@@ -45,6 +45,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/carts", cartRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/uploads", express.static("uploads"));
 
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {

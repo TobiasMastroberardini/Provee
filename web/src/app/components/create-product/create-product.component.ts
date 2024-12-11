@@ -22,6 +22,7 @@ export class CreateProductComponent implements OnInit {
   categoria = 1;
   descripcion = '';
   cantidad_disponible = 0;
+  images: File[] = [];
 
   constructor(
     private categoriesService: CategoriesService,
@@ -49,24 +50,37 @@ export class CreateProductComponent implements OnInit {
   }
 
   createProduct() {
-    this.productService
-      .createProduct(
-        this.nombre,
-        this.precio,
-        this.descripcion,
-        this.estado,
-        this.cantidad_disponible,
-        this.categoria
-      )
-      .subscribe(
-        (response) => {
-          console.log('Producto creado', response);
-          this.toggleModal(); // Cerrar el modal después de agregar el producto
-        },
-        (error) => {
-          console.error('Error al crear producto', error);
-        }
-      );
-    console.log('Enviado');
+    const formData = new FormData();
+
+    // Agregar los datos del producto al FormData
+    formData.append('nombre', this.nombre);
+    formData.append('precio', this.precio.toString());
+    formData.append('descripcion', this.descripcion);
+    formData.append('estado', this.estado);
+    formData.append('cantidad_disponible', this.cantidad_disponible.toString());
+    formData.append('categoria_id', this.categoria.toString());
+
+    // Agregar las imágenes al FormData
+    this.images.forEach((file) => {
+      formData.append('images', file); // El nombre 'images' debe coincidir con el backend
+    });
+
+    // Enviar los datos al servicio
+    this.productService.createProduct(formData).subscribe(
+      (response) => {
+        console.log('Producto creado', response);
+        this.toggleModal(); // Cerrar el modal
+      },
+      (error) => {
+        console.error('Error al crear producto', error);
+      }
+    );
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.images = Array.from(input.files); // Convertir FileList a array
+    }
   }
 }

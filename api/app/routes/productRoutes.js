@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const ProductController = require("../controllers/productController");
 const AuthMiddleware = require("../middlewares/authMiddleware");
+const uploadMiddleware = require("../middlewares/uploadMiddleware");
 
 // Ruta para filtrar productos
 router.get("/filter", ProductController.getByConditions);
@@ -15,16 +16,18 @@ router.get("/:id", ProductController.getById);
 // Ruta protegida para crear productos (solo admin)
 router.post(
   "/",
-  AuthMiddleware.verifyToken, // Verificar si el usuario está autenticado
-  AuthMiddleware.isAdmin, // Verificar si el usuario es admin
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.isAdmin,
+  uploadMiddleware.array("images", 5), // Permitir hasta 5 imágenes por producto
   ProductController.create
 );
 
-// Ruta protegida para actualizar productos (solo admin)
+// Ruta protegida para actualizar productos con imágenes
 router.put(
   "/:id",
-  AuthMiddleware.verifyToken, // Verificar si el usuario está autenticado
-  AuthMiddleware.isAdmin, // Verificar si el usuario es admin
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.isAdmin,
+  uploadMiddleware.array("images", 5),
   ProductController.update
 );
 
