@@ -120,12 +120,23 @@ class Product {
         query += " WHERE " + whereClauses.join(" AND ");
       }
 
-      // Ejecutar la consulta
+      // Ejecutar la consulta para obtener los productos
       const [products] = await db.query(query, values);
 
-      return products;
+      // Consulta para obtener todas las imágenes
+      const [images] = await db.query("SELECT * FROM product_images");
+
+      // Añadir imágenes a sus productos correspondientes
+      const productsWithImages = products.map((product) => {
+        const productImages = images
+          .filter((image) => image.product_id === product.id)
+          .map((image) => image.imagen_url); // Cambia a imagen_url
+        return { ...product, images: productImages };
+      });
+
+      return productsWithImages; // Devuelve los productos con sus imágenes
     } catch (error) {
-      throw error;
+      throw error; // Propaga el error al controlador
     }
   }
 }
