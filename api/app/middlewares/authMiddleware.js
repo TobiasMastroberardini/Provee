@@ -1,4 +1,3 @@
-// middlewares/authMiddleware.js
 const jwt = require("jsonwebtoken");
 
 class authMiddleware {
@@ -15,8 +14,18 @@ class authMiddleware {
       }
 
       req.userId = decoded.id; // Almacena el id del usuario
+      req.rol = decoded.rol; // Almacena el rol del usuario
       next(); // Pasa el control a la siguiente función
     });
+  }
+
+  static async isAdmin(req, res, next) {
+    if (req.rol !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Acceso denegado: No eres administrador" });
+    }
+    next(); // Continúa si el usuario es administrador
   }
 }
 module.exports = authMiddleware;

@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,11 @@ import { AlertService } from '../alert/alert.service';
 export class ProductService {
   private baseUrl = 'http://localhost:3005/api/products'; // Reemplaza con tu URL de API real
 
-  constructor(private http: HttpClient, private alertService: AlertService) {}
+  constructor(
+    private http: HttpClient,
+    private alertService: AlertService,
+    private authService: AuthService
+  ) {}
 
   // Método para obtener todos los productos
   getProducts(): Observable<any> {
@@ -34,6 +39,13 @@ export class ProductService {
     cantidad_disponible: number,
     categoria: number
   ): Observable<any> {
+    const token = this.authService.getToken();
+
+    if (!token) {
+      this.alertService.showAlert('No estás autenticado. Inicia sesión.');
+      return of(null); // Si no hay token, no se permite crear el producto
+    }
+
     const product = {
       nombre,
       precio,
@@ -42,8 +54,12 @@ export class ProductService {
       categoria_id: categoria,
       estado,
     };
-    console.log(product);
-    return this.http.post<any>(this.baseUrl, product).pipe(
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+    });
+
+    return this.http.post<any>(this.baseUrl, product, { headers }).pipe(
       tap((response) => {
         // Si se agrega correctamente, emitimos un mensaje de éxito
         this.alertService.showAlert('Producto agregado correctamente');

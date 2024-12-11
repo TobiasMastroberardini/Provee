@@ -16,4 +16,13 @@ router.post("/logout", authMiddleware.verifyToken, Auth.logout); // Asegúrate d
 
 router.get("/token", authMiddleware.verifyToken, Auth.getUserLogged);
 
+router.get(
+  "/admin/dashboard",
+  authMiddleware.verifyToken, // Verifica si el usuario está autenticado
+  authMiddleware.isAdmin, // Verifica si el usuario es admin
+  (req, res) => {
+    res.json({ message: "Bienvenido al panel de administración" });
+  }
+);
+
 module.exports = router;

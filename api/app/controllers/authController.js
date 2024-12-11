@@ -81,10 +81,12 @@ class Auth {
         return res.status(500).json({ message: "Error interno del servidor" });
       }
 
-      // Generar el token
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+      // Generar el token con id y rol
+      const token = jwt.sign(
+        { id: user.id, rol: user.rol }, // Incluye el rol
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
 
       // Responder con éxito y los datos necesarios
       return res.status(200).json({
@@ -93,6 +95,7 @@ class Auth {
         user: {
           id: user.id,
           email: user.email,
+          rol: user.rol, // Incluye el rol en la respuesta
         },
       });
     } catch (error) {
