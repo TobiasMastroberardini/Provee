@@ -50,7 +50,6 @@ class ProductController {
   }
 
   // Actualizar un producto existente
-  // Actualizar un producto existente
   static async update(req, res) {
     const { id } = req.params;
     const updatedData = req.body;
@@ -89,6 +88,7 @@ class ProductController {
   static async delete(req, res) {
     const { id } = req.params;
     try {
+      const images = await Product.deleteProductImages(id);
       const affectedRows = await Product.deleteProduct(id);
       if (affectedRows === 0) {
         return res.status(404).json({ message: "Producto no encontrado" });
