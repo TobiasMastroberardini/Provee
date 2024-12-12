@@ -50,26 +50,35 @@ class ProductController {
   }
 
   // Actualizar un producto existente
+  // Actualizar un producto existente
   static async update(req, res) {
     const { id } = req.params;
     const updatedData = req.body;
-    const images = req.files; // Archivos subidos
+    const images = req.files;
 
     try {
-      // Actualizar datos del producto
+      // Si 'images' es un campo de la tabla, procesarlo como JSON
+      if (updatedData.images && Array.isArray(updatedData.images)) {
+        updatedData.images = JSON.stringify(updatedData.images);
+      }
+
+      // Actualizar los datos del producto
       const affectedRows = await Product.updateProduct(id, updatedData);
 
       if (affectedRows === 0) {
         return res.status(404).json({ message: "Producto no encontrado" });
       }
 
-      // Si hay imágenes nuevas, agregarlas
+      // Manejar imágenes
       if (images && images.length > 0) {
         const imageUrls = images.map((file) => `/uploads/${file.filename}`);
+
+        // Eliminar las imágenes existentes antes de agregar las nuevas
+        await Product.deleteProductImages(id);
         await Product.addProductImages(id, imageUrls);
       }
 
-      res.status(200).json({ message: "Producto actualizado" });
+      res.status(200).json({ message: "Producto actualizado correctamente" });
     } catch (error) {
       console.error("Error al actualizar el producto:", error);
       res.status(500).json({ message: "Error al actualizar el producto" });

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CartComponent } from './components/cart/cart.component';
 import { CreateProductComponent } from './components/create-product/create-product.component';
+import { EditProductComponent } from './components/edit-product/edit-product.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
@@ -60,6 +61,10 @@ export const routes: Routes = [
   {
     path: 'create-product',
     component: CreateProductComponent,
+  },
+  {
+    path: 'edit-product/:id',
+    component: EditProductComponent,
   },
   {
     path: '**', // Ruta para manejar URLs no encontradas

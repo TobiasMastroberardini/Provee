@@ -1,0 +1,68 @@
+<div class="container">
+  <h2>Editar Producto</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="nombre">Nombre</label>
+      <input id="nombre" [(ngModel)]="product.nombre" name="nombre" required />
+    </div>
+    <div>
+      <label for="descripcion">Descripción</label>
+      <textarea
+        id="descripcion"
+        [(ngModel)]="product.descripcion"
+        name="descripcion"
+        required
+      ></textarea>
+    </div>
+    <div>
+      <label for="cantidad_disponible">Cantidad Disponible</label>
+      <input
+        id="cantidad_disponible"
+        [(ngModel)]="product.cantidad_disponible"
+        name="cantidad_disponible"
+        type="number"
+        required
+        min="1"
+      />
+    </div>
+    <div>
+      <label for="categoria_id">Categoría</label>
+      <select
+        id="categoria_id"
+        [(ngModel)]="product.categoria_id"
+        name="categoria_id"
+        required
+      >
+        <option *ngFor="let categoria of categorias" [value]="categoria.id">
+          {{ categoria.nombre }}
+        </option>
+      </select>
+    </div>
+    <div>
+      <label for="estado">Estado</label>
+      <select id="estado" [(ngModel)]="product.estado" name="estado" required>
+        <option value="disponible">Disponible</option>
+        <option value="agotado">Agotado</option>
+      </select>
+    </div>
+    <div>
+      <label for="on_sale">¿En oferta?</label>
+      <input
+        id="on_sale"
+        [(ngModel)]="product.on_sale"
+        name="on_sale"
+        type="checkbox"
+      />
+    </div>
+    <div>
+      <label for="images">Imágenes</label>
+      <input
+        id="images"
+        type="file"
+        (change)="onImageSelect($event)"
+        multiple
+      />
+    </div>
+    <button type="submit">Guardar Cambios</button>
+  </form>
+</div>

@@ -63,19 +63,6 @@ class Product {
     }
   }
 
-  static async addProductImages(productId, imageUrls) {
-    try {
-      const values = imageUrls.map((url) => [productId, url]);
-      await db.query(
-        "INSERT INTO product_images (product_id, imagen_url) VALUES ?",
-        [values]
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Actualizar un producto por su ID
   static async updateProduct(id, data) {
     try {
       const [result] = await db.query("UPDATE products SET ? WHERE id = ?", [
@@ -83,6 +70,30 @@ class Product {
         id,
       ]);
       return result.affectedRows; // Devuelve el número de filas afectadas
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Eliminar las imágenes de un producto
+  static async deleteProductImages(productId) {
+    try {
+      await db.query("DELETE FROM product_images WHERE product_id = ?", [
+        productId,
+      ]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Agregar imágenes a un producto
+  static async addProductImages(productId, imageUrls) {
+    try {
+      const values = imageUrls.map((url) => [productId, url]);
+      await db.query(
+        "INSERT INTO product_images (product_id, imagen_url) VALUES ?",
+        [values]
+      );
     } catch (error) {
       throw error;
     }
