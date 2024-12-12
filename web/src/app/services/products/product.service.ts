@@ -77,6 +77,7 @@ export class ProductService {
       'cantidad_disponible',
       product.cantidad_disponible.toString()
     );
+    formData.append('precio', product.precio);
     formData.append('categoria_id', product.categoria_id.toString());
     formData.append('estado', product.estado);
     formData.append('on_sale', product.on_sale ? '1' : '0');
