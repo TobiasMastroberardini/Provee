@@ -9,7 +9,7 @@ import { ProductService } from '../../services/products/product.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './create-product.component.html',
-  styleUrl: './create-product.component.scss',
+  styleUrls: ['./create-product.component.scss'],
 })
 export class CreateProductComponent implements OnInit {
   isModalVisible: boolean = false;
@@ -17,11 +17,11 @@ export class CreateProductComponent implements OnInit {
 
   nombre = '';
   precio = 0;
-  estado: string = 'disponible'; // Por defecto, el estado es 'disponible'
-  estadoCheckbox: boolean = true; // El checkbox está marcado por defecto  descripcion = '';
-  categoria = 1;
+  estado: string = 'disponible';
+  estadoCheckbox: boolean = true;
   descripcion = '';
-  on_sale = 1;
+  categoria = 0;
+  on_sale = 0;
   cantidad_disponible = 0;
   images: File[] = [];
 
@@ -51,7 +51,7 @@ export class CreateProductComponent implements OnInit {
   }
 
   updateOnSale(): void {
-    this.on_sale = this.on_sale ? 0 : 1;
+    this.on_sale = this.on_sale === 0 ? 1 : 0;
   }
 
   createProduct() {

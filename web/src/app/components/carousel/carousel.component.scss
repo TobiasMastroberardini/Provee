@@ -1,0 +1,10 @@
+#carouselExampleIndicators,
+.carousel-inner {
+  max-height: 100vh;
+  width: auto;
+}
+.carousel-inner img {
+  object-fit: cover; /* Mantiene el aspecto y llena el contenedor */
+  height: 100%; /* Hace que las imágenes ocupen toda la altura del carrusel */
+  width: 100%; /* Hace que las imágenes ocupen todo el ancho */
+}
