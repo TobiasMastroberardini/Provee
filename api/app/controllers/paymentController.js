@@ -47,7 +47,7 @@ const createPayment = async (req, res) => {
     const preference = {
       items: items,
       back_urls: {
-        success: "http://localhost:4200/home", // Cambia según tu aplicación
+        success: "http://localhost:4200/success", // Cambia según tu aplicación
         failure: "http://localhost:4200/failure",
         pending: "http://localhost:4200/pending",
       },
