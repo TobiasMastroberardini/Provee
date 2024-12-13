@@ -144,6 +144,28 @@ class Cart {
     }
   }
 
+  static async updatePriceItem(product_id, price) {
+    try {
+      // Ejecutar la consulta de actualización
+      const [result] = await db.query(
+        "UPDATE cart_items SET price = ? WHERE product_id = ?",
+        [price, product_id]
+      );
+
+      // Retornar resultado de la operación
+      if (result.affectedRows === 0) {
+        throw new Error(`No se encontró el item con product ID ${product_id}`);
+      }
+
+      return result; // Retorna información del resultado si es necesario
+    } catch (error) {
+      console.error("Error al actualizar el item del carrito:", error);
+      throw new Error(
+        "Fallo al actualizar el precio del item, por favor intenta de nuevo"
+      );
+    }
+  }
+
   static async getCartIdByuserId(user_id) {
     try {
       const [rows] = await db.query("SELECT id FROM cart WHERE user_id = ?", [

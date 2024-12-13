@@ -1,4 +1,5 @@
 const Product = require("../models/productModel");
+const Cart = require("../models/cartModel");
 
 class ProductController {
   // Obtener todos los productos
@@ -76,6 +77,9 @@ class ProductController {
         await Product.deleteProductImages(id);
         await Product.addProductImages(id, imageUrls);
       }
+
+      const newPrice = req.body.precio;
+      await Cart.updatePriceItem(id, newPrice);
 
       res.status(200).json({ message: "Producto actualizado correctamente" });
     } catch (error) {
