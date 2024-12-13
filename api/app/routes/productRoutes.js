@@ -10,6 +10,8 @@ router.get("/filter", ProductController.getByConditions);
 // Ruta para obtener todos los productos
 router.get("/", ProductController.getAll);
 
+router.get("/paginated", ProductController.getPaginatedProducts);
+
 // Ruta para obtener un producto por su ID
 router.get("/:id", ProductController.getById);
 

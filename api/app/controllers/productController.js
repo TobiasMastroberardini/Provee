@@ -2,6 +2,26 @@ const Product = require("../models/productModel");
 const Cart = require("../models/cartModel");
 
 class ProductController {
+  static async getPaginatedProducts(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1; // Página actual, por defecto 1
+      const limit = parseInt(req.query.limit) || 12; // Límite por página, por defecto 12
+
+      const result = await Product.getPaginatedProducts(page, limit);
+
+      res.status(200).json({
+        page,
+        limit,
+        totalPages: result.totalPages,
+        totalProducts: result.totalProducts,
+        data: result.data,
+      });
+    } catch (error) {
+      console.error("Error al obtener productos:", error);
+      res.status(500).json({ message: "Error al obtener productos" });
+    }
+  }
+
   // Obtener todos los productos
   static async getAll(req, res) {
     try {

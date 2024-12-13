@@ -14,6 +14,9 @@ import { ProductCardComponent } from '../product-card/product-card.component';
 export class ProductListComponent implements OnInit {
   products: any[] = [];
   productName: string = '';
+  currentPage = 1; // Página actual
+  totalPages = 0; // Total de páginas
+  limit = 12; // Productos por página
 
   constructor(
     private productService: ProductService,
@@ -45,14 +48,24 @@ export class ProductListComponent implements OnInit {
   }
 
   fetchProducts(): void {
-    this.productService.getProducts().subscribe(
-      (data) => {
-        this.products = data;
-      },
-      (error) => {
-        console.error('Error fetching products', error);
-      }
-    );
+    this.productService
+      .getPaginatedProducts(this.currentPage, this.limit)
+      .subscribe(
+        (data) => {
+          this.products = data.data; // Asume que los productos están en `data.data`
+          this.totalPages = data.totalPages; // Total de páginas
+        },
+        (error) => {
+          console.error('Error fetching products', error);
+        }
+      );
+  }
+
+  changePage(page: number): void {
+    if (page > 0 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.fetchProducts();
+    }
   }
 
   fetchByFilter(filter: string): void {

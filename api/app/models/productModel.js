@@ -1,6 +1,39 @@
 const db = require("../../database/database");
 
 class Product {
+  static async getPaginatedProducts(page, limit) {
+    const offset = (page - 1) * limit;
+
+    // Obtener productos paginados
+    const [products] = await db.query(
+      "SELECT * FROM products LIMIT ? OFFSET ?",
+      [limit, offset]
+    );
+
+    // Obtener todas las imágenes
+    const [images] = await db.query("SELECT * FROM product_images");
+
+    // Relacionar imágenes con productos
+    const productsWithImages = products.map((product) => {
+      const productImages = images
+        .filter((image) => image.product_id === product.id)
+        .map((image) => image.imagen_url);
+      return { ...product, images: productImages };
+    });
+
+    // Contar el total de productos
+    const [totalResult] = await db.query(
+      "SELECT COUNT(*) AS total FROM products"
+    );
+    const totalProducts = totalResult[0].total;
+
+    return {
+      data: productsWithImages,
+      totalProducts,
+      totalPages: Math.ceil(totalProducts / limit),
+    };
+  }
+
   static async getAllProducts() {
     try {
       // Consulta para obtener todos los productos

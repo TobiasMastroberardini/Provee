@@ -21,6 +21,13 @@ export class ProductService {
     return this.http.get<any>(this.baseUrl);
   }
 
+  // services/products/product.service.ts
+  getPaginatedProducts(page: number, limit: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.baseUrl}/paginated/?page=${page}&limit=${limit}`
+    );
+  }
+
   // Método para obtener un producto por ID
   getProductById(productId: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/${productId}`);
