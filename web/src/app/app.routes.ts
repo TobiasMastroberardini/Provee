@@ -11,6 +11,7 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { ProductTableComponent } from './components/prooduct-table/prooduct-table.component';
 import { RecoveryPassComponent } from './components/recovery-pass/recovery-pass.component';
 import { SingupComponent } from './components/singup/singup.component';
+import { SuccessComponent } from './components/success/success.component';
 
 export const routes: Routes = [
   {
@@ -65,6 +66,10 @@ export const routes: Routes = [
   {
     path: 'edit-product/:id',
     component: EditProductComponent,
+  },
+  {
+    path: 'success',
+    component: SuccessComponent,
   },
   {
     path: '**', // Ruta para manejar URLs no encontradas
