@@ -101,21 +101,40 @@
             />
           </div>
           <div class="mt-4 flex items-center">
-            <input
-              type="checkbox"
-              id="disponible"
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-              [(ngModel)]="estado"
-              (change)="updateEstado()"
-              checked
-            />
-            <label
-              for="disponible"
-              class="ml-2 text-sm font-medium text-gray-900"
-            >
-              Disponible
-            </label>
+            <div class="px-2 py-1">
+              <input
+                type="checkbox"
+                id="disponible"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                [(ngModel)]="estado"
+                (change)="updateEstado()"
+                checked
+              />
+              <label
+                for="disponible"
+                class="ml-2 text-sm font-medium text-gray-900"
+              >
+                Disponible
+              </label>
+            </div>
+            <div class="px-2 py-1">
+              <input
+                type="checkbox"
+                id="on_sale"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                [(ngModel)]="on_sale"
+                (change)="updateOnSale()"
+                checked
+              />
+              <label
+                for="on_sale"
+                class="ml-2 text-sm font-medium text-gray-900"
+              >
+                En oferta
+              </label>
+            </div>
           </div>
+
           <div>
             <div>
               <label

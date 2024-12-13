@@ -17,6 +17,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authSubscription: Subscription | null = null;
   isLogged: boolean = false;
   searchQuery: string = ''; // Variable para almacenar el valor del input de búsqueda
+  isAdmin: boolean = false; // Variable para saber si el usuario es admin
 
   constructor(
     private authService: AuthService,
@@ -25,10 +26,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Suscribirse al estado de autenticación
+    // Suscribirse al estado de autenticación y al rol
     this.authSubscription = this.authService.isLogged$.subscribe((status) => {
       this.isLogged = status;
+      this.setIsAdmin(); // Si el estado de logueo cambia, verificamos si el usuario es admin
     });
+  }
+
+  setIsAdmin() {
+    if (this.isLogged) {
+      this.authService.isAdmin().subscribe((isAdmin) => {
+        this.isAdmin = isAdmin;
+      });
+    } else {
+      this.isAdmin = false; // Si no está logueado, no es admin
+    }
   }
 
   toggleMenu() {
@@ -38,8 +50,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logout() {
     this.authService.logout(); // Cerrar sesión
   }
-
   ngOnDestroy(): void {
+    // Asegúrate de desuscribirte de las observables
     if (this.authSubscription) {
       this.authSubscription.unsubscribe(); // Cancelar la suscripción
     }

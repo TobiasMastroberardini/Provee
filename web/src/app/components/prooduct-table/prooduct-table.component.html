@@ -77,8 +77,8 @@
                     <div class="flex items-center gap-x-2">
                       <img
                         class="object-cover w-10 h-10 rounded-full"
-                        [src]="product.image"
-                        alt="{{ product.name }}"
+                        src="http://localhost:3005/api{{ product.images[0] }}"
+                        alt="{{ product.nombre }}"
                       />
                       <div>
                         <h2 class="font-medium text-gray-800">

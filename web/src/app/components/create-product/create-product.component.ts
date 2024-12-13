@@ -21,6 +21,7 @@ export class CreateProductComponent implements OnInit {
   estadoCheckbox: boolean = true; // El checkbox está marcado por defecto  descripcion = '';
   categoria = 1;
   descripcion = '';
+  on_sale = 1;
   cantidad_disponible = 0;
   images: File[] = [];
 
@@ -49,6 +50,10 @@ export class CreateProductComponent implements OnInit {
     this.estado = this.estadoCheckbox ? 'disponible' : 'no_disponible';
   }
 
+  updateOnSale(): void {
+    this.on_sale = this.on_sale ? 0 : 1;
+  }
+
   createProduct() {
     const formData = new FormData();
 
@@ -57,6 +62,7 @@ export class CreateProductComponent implements OnInit {
     formData.append('precio', this.precio.toString());
     formData.append('descripcion', this.descripcion);
     formData.append('estado', this.estado);
+    formData.append('on_sale', this.on_sale.toString());
     formData.append('cantidad_disponible', this.cantidad_disponible.toString());
     formData.append('categoria_id', this.categoria.toString());
 

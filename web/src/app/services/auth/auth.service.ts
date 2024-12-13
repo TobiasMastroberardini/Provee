@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
 
 @Injectable({
@@ -87,5 +87,12 @@ export class AuthService {
 
   isLogged() {
     return !!this.getToken();
+  }
+
+  isAdmin(): Observable<boolean> {
+    return this.getUserLogged().pipe(
+      map((user) => user?.rol === 'admin'), // Verifica si el campo "rol" es igual a 'admin'
+      catchError(() => of(false)) // Retorna false si hay un error o no tiene el rol adecuado
+    );
   }
 }
