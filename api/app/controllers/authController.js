@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
 const Cart = require("../models/cartModel");
 const HandleBcrypt = require("../middlewares/handleBcrypt");
+const UserService = require("../services/userService");
 const jwt = require("jsonwebtoken");
 
 class Auth {
@@ -131,6 +132,37 @@ class Auth {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error al obtener el usuario" });
+    }
+  }
+
+  static async recoverPassword(req, res) {
+    try {
+      const { email } = req.body;
+
+      // Buscar usuario por email
+      const user = await userModel.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      // Generar nueva contraseña
+      const newPassword = await UserService.generateRandomPassword();
+
+      // Encriptar y actualizar contraseña
+      const hashedPassword = await UserService.encryptPassword(newPassword);
+      await userModel.updatePassword(user.id, hashedPassword);
+
+      // Enviar correo con la nueva contraseña
+      const subject = "Recuperación de contraseña";
+      const message = `Hola ${user.name}, tu nueva contraseña es: ${newPassword} , inicia sesion y cambiala.`;
+      await UserService.sendEmail(email, subject, message);
+
+      res
+        .status(200)
+        .json({ message: "Correo enviado con la nueva contraseña" });
+    } catch (error) {
+      console.error("Error en recuperación de contraseña:", error);
+      res.status(500).json({ message: "Error en el servidor" });
     }
   }
 }

@@ -25,4 +25,10 @@ router.get(
   }
 );
 
+router.post(
+  "/recover-password",
+  authMiddleware.validateEmail,
+  Auth.recoverPassword
+);
+
 module.exports = router;

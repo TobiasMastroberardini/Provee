@@ -27,5 +27,16 @@ class authMiddleware {
     }
     next(); // Continúa si el usuario es administrador
   }
+
+  static async validateEmail(req, res, next) {
+    const { email } = req.body;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({ message: "Correo electrónico inválido" });
+    }
+
+    next();
+  }
 }
 module.exports = authMiddleware;

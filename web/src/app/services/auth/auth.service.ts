@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
@@ -94,5 +94,14 @@ export class AuthService {
       map((user) => user?.rol === 'admin'), // Verifica si el campo "rol" es igual a 'admin'
       catchError(() => of(false)) // Retorna false si hay un error o no tiene el rol adecuado
     );
+  }
+
+  recoverPassword(email: string): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { email };
+
+    return this.http.post(`${this.baseUrl}/recover-password`, body, {
+      headers,
+    });
   }
 }
