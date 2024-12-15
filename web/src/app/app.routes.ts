@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CartComponent } from './components/cart/cart.component';
+import { ChangePassComponent } from './components/change-pass/change-pass.component';
 import { CreateProductComponent } from './components/create-product/create-product.component';
 import { EditProductComponent } from './components/edit-product/edit-product.component';
 import { HomeComponent } from './components/home/home.component';
@@ -58,6 +59,10 @@ export const routes: Routes = [
   {
     path: 'recovery-pass',
     component: RecoveryPassComponent,
+  },
+  {
+    path: 'change-pass',
+    component: ChangePassComponent,
   },
   {
     path: 'create-product',

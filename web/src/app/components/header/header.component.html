@@ -34,17 +34,62 @@
             href="cart"
             class="text-gray-800 hover:text-purple-800 text-lg font-light cursor-pointer transition duration-200 ease-in-out transform hover:scale-105 cart-button"
           >
-            Carrito
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-cart2"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l1.25 5h8.22l1.25-5zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"
+              />
+            </svg>
           </a>
           <div class="md:flex items-center space-x-2">
             <!-- Condicional para mostrar botón de login o logout -->
             <div *ngIf="isLogged; else loggedOutTemplate">
-              <button
-                (click)="logout()"
-                class="text-gray-800 hover:text-purple-800 text-lg font-light cursor-pointer transition duration-200 ease-in-out transform hover:scale-105 cart-button"
-              >
-                Cerrar sesión
-              </button>
+              <div class="btn-group cart-button">
+                <button
+                  type="button"
+                  class="text-gray-800 hover:text-purple-800 text-lg font-light cursor-pointer transition duration-200 ease-in-out transform hover:scale-105"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
+                    />
+                  </svg>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="change-pass"
+                      >Cambiar contraseña</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="my-shops">Mis compras</a>
+                  </li>
+
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <button class="dropdown-item" (click)="logout()">
+                      Cerrar sesion
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
             <ng-template #loggedOutTemplate>
               <a
@@ -146,17 +191,58 @@
         href="cart"
         class="block text-gray-800 hover:text-purple-800 text-lg font-light cursor-pointer transition duration-200 ease-in-out transform hover:scale-105 p-2 rounded-md cart-button"
       >
-        Carrito
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-cart2"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l1.25 5h8.22l1.25-5zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"
+          />
+        </svg>
       </a>
       <div class="md:flex items-center space-x-2">
         <!-- Condicional para mostrar botón de login o logout -->
         <div *ngIf="isLogged; else loggedOutTemplate">
-          <button
-            (click)="logout()"
-            class="block text-gray-800 hover:text-purple-800 text-lg font-light cursor-pointer transition duration-200 ease-in-out transform hover:scale-105 p-2 rounded-md cart-button"
-          >
-            Cerrar sesión
-          </button>
+          <div class="btn-group cart-button">
+            <button
+              type="button"
+              class="text-gray-800 hover:text-purple-800 text-lg font-light cursor-pointer transition duration-200 ease-in-out transform hover:scale-105"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-person-circle"
+                viewBox="0 0 16 16"
+              >
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                <path
+                  fill-rule="evenodd"
+                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
+                />
+              </svg>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="#">Cambiar contraseña</a>
+              </li>
+              <li><a class="dropdown-item" href="#">Mis compras</a></li>
+
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <button class="dropdown-item" (click)="logout()">
+                  Cerrar sesion
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
         <ng-template #loggedOutTemplate>
           <a
@@ -166,6 +252,13 @@
           >
         </ng-template>
       </div>
+      <a
+        *ngIf="isLogged && isAdmin"
+        href="product-table"
+        class="text-gray-800 hover:text-purple-800 text-lg font-light cursor-pointer transition duration-200 ease-in-out transform hover:scale-105"
+      >
+        Admin Panel
+      </a>
     </div>
   </div>
 </nav>
