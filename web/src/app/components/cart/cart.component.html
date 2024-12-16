@@ -4,7 +4,11 @@
 
     <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-        <div *ngIf="loading" class="text-center"><p>Cargando...</p></div>
+        <div *ngIf="loading" class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Cargando...</span>
+          </div>
+        </div>
         <div class="space-y-6" *ngFor="let item of cartItems">
           <app-card-cart
             [product]="item.productDetails"

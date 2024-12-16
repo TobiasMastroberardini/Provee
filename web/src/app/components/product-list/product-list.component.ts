@@ -1,46 +1,62 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { CategoriesService } from '../../services/categories/categories.service';
 import { ProductService } from '../../services/products/product.service';
 import { ProductCardComponent } from '../product-card/product-card.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent],
+  imports: [CommonModule, ProductCardComponent, RouterModule],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
 })
 export class ProductListComponent implements OnInit {
+  categories: any[] = [];
   products: any[] = [];
   productName: string = '';
+  productCategory: string = '';
   currentPage = 1; // Página actual
   totalPages = 0; // Total de páginas
   limit = 12; // Productos por página
 
   constructor(
     private productService: ProductService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private categoriesService: CategoriesService
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to the route URL
-    this.route.url.subscribe((urlSegments) => {
-      const currentPath = urlSegments.map((segment) => segment.path).join('/');
+    this.categoriesService.getAll().subscribe(
+      (data) => {
+        this.categories = data; // Guardar las categorías obtenidas
+      },
+      (error) => {
+        console.error('Error fetching categories', error);
+      }
+    );
 
-      if (currentPath === 'offers') {
-        console.log('Fetching products on sale');
-        this.fetchByFilter('on_sale=1'); // Llama a la función para obtener productos en oferta
+    // Subscribe to route changes
+    this.route.queryParams.subscribe((queryParams) => {
+      if (queryParams['nombre']) {
+        const name = queryParams['nombre'];
+        this.productName = name;
+        this.fetchByFilter(`nombre=${name}`); // Filtra por nombre
+      } else if (queryParams['category']) {
+        const category = queryParams['category'];
+        this.productCategory = category;
+        this.fetchByFilter(`categoria_id=${category}`); // Filtra por categoría
       } else {
-        // Si quieres manejar otras rutas, puedes continuar aquí (opcional)
-        this.route.params.subscribe((params) => {
-          const name = params['name']; // Obtén el parámetro 'name'
-
-          if (name) {
-            this.productName = name; // Guardar el nombre del producto
-            this.fetchByFilter(`nombre=${name}`); // Llamada para obtener productos por nombre
+        this.route.url.subscribe((urlSegments) => {
+          const currentPath = urlSegments
+            .map((segment) => segment.path)
+            .join('/');
+          if (currentPath === 'offers') {
+            console.log('Fetching products on sale');
+            this.fetchByFilter('on_sale=1'); // Filtra por oferta
           } else {
-            this.fetchProducts(); // Si no hay parámetro, obtener todos los productos
+            this.fetchProducts(); // Si no hay filtros, obtener todos los productos
           }
         });
       }

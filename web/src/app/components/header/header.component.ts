@@ -60,8 +60,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Función para actualizar la URL con el valor del input de búsqueda
   updateUrl(): void {
     if (this.searchQuery) {
-      // Navegar a la ruta /products/(searchQuery)
-      this.router.navigate([`/products/${this.searchQuery}`]); // Cambia la ruta a /products/valorDelInput
+      // Navegar a la ruta /products con el parámetro query `nombre`
+      this.router.navigate(['/products'], {
+        queryParams: { nombre: this.searchQuery },
+      });
     }
   }
 }
