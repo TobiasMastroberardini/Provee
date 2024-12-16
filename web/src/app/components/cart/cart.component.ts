@@ -29,6 +29,11 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
     this.cartService.getCartItems().subscribe(
       (items) => {
+        // Si la lista de productos está vacía, directamente setea loading a false
+        if (items.length === 0) {
+          this.loading = false;
+        }
+
         const productObservables = items.map((item: any) =>
           this.productService
             .getProductById(item.product_id)
@@ -43,15 +48,17 @@ export class CartComponent implements OnInit {
           (productsWithDetails) => {
             this.cartItems = productsWithDetails;
             this.calculateTotal();
-            this.loading = false;
+            this.loading = false; // Desactiva la animación de carga
           },
           (error) => {
             console.error('Error al obtener detalles del producto:', error);
+            this.loading = false; // También desactiva la animación en caso de error
           }
         );
       },
       (error) => {
         console.error('Error al obtener los items del carrito:', error);
+        this.loading = false; // Desactiva la animación en caso de error
       }
     );
   }

@@ -13,6 +13,7 @@ import { ProductTableComponent } from './components/prooduct-table/prooduct-tabl
 import { RecoveryPassComponent } from './components/recovery-pass/recovery-pass.component';
 import { SingupComponent } from './components/singup/singup.component';
 import { SuccessComponent } from './components/success/success.component';
+import { AdminGuard } from './guard/admin/admin.guard';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,7 @@ export const routes: Routes = [
   {
     path: 'product-table',
     component: ProductTableComponent,
+    canActivate: [AdminGuard],
   },
   {
     path: 'home',
@@ -67,10 +69,12 @@ export const routes: Routes = [
   {
     path: 'create-product',
     component: CreateProductComponent,
+    canActivate: [AdminGuard],
   },
   {
     path: 'edit-product/:id',
     component: EditProductComponent,
+    canActivate: [AdminGuard],
   },
   {
     path: 'success',
