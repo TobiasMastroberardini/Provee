@@ -154,7 +154,7 @@ class Auth {
 
       // Enviar correo con la nueva contraseña
       const subject = "Recuperación de contraseña";
-      const message = `Hola ${user.name}, tu nueva contraseña es: ${newPassword} , inicia sesion y cambiala.`;
+      const message = `Hola ${user.nombre}, tu nueva contraseña es: ${newPassword} , inicia sesion y cambiala.`;
       await UserService.sendEmail(email, subject, message);
 
       res

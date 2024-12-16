@@ -14,8 +14,13 @@ class Category {
     db.query("SELECT * FROM categories WHERE id = ?", [id], callback);
   }
 
-  static createCategory(data, callback) {
-    db.query("INSERT INTO categories SET ?", data, callback);
+  static async createCategory(data) {
+    try {
+      const [result] = await db.query("INSERT INTO categories SET ?", data);
+      return result.insertId; // Devuelve el ID del nuevo producto
+    } catch (error) {
+      throw error;
+    }
   }
 
   static updateCategory(id, data, callback) {

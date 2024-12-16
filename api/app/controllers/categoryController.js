@@ -24,14 +24,18 @@ class CategoryController {
     });
   }
 
-  static create(req, res) {
-    const newCategory = req.body;
-    Category.createCategory(newCategory, (error, result) => {
-      if (error) {
-        return res.status(500).json({ error });
-      }
-      return res.status(201).json({ id: result.insertId, ...newCategory });
-    });
+  static async create(req, res) {
+    const category = req.body;
+
+    try {
+      // Crear el producto
+      const categoryId = await Category.createCategory(category);
+
+      res.status(201).json({ id: categoryId, ...category });
+    } catch (error) {
+      console.error("Error al crear la categoria:", error);
+      res.status(500).json({ message: "Error al crear la categoria" });
+    }
   }
 
   static update(req, res) {

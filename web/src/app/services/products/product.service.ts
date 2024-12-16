@@ -105,7 +105,7 @@ export class ProductService {
           this.alertService.showAlert('Producto editado correctamente');
         }),
         catchError((error) => {
-          this.alertService.showAlert('Producto no editado');
+          this.alertService.showAlert('Producto no editado desde servicio');
           console.error(error);
           return of(null);
         })

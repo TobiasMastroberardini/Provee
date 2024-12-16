@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/products/product.service';
-import { CreateProductComponent } from '../create-product/create-product.component'; // Ajusta la ruta según corresponda
+import { CreateCategoryComponent } from '../create-category/create-category.component'; // Ajusta la ruta según corresponda
+import { CreateProductComponent } from '../create-product/create-product.component';
 
 @Component({
   selector: 'app-product-table',
   standalone: true,
-  imports: [CommonModule, CreateProductComponent],
+  imports: [CommonModule, CreateProductComponent, CreateCategoryComponent],
   templateUrl: './prooduct-table.component.html',
   styleUrl: './prooduct-table.component.scss',
 })

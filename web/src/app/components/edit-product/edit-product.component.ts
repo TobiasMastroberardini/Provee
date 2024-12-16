@@ -28,17 +28,29 @@ export class EditProductComponent implements OnInit {
     const productId = this.route.snapshot.paramMap.get('id');
     if (productId) {
       const id = parseInt(productId, 10); // Convertir a número
-      this.productService.getProductById(id).subscribe((data) => {
-        this.product = data;
+      this.productService.getProductById(id).subscribe({
+        next: (data) => {
+          if (data) {
+            this.product = data; // Precarga los datos del producto
+          } else {
+            console.error('Producto no encontrado');
+            this.router.navigate(['/productos']); // Redirige si no se encuentra el producto
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener el producto:', err);
+          this.router.navigate(['/productos']); // Maneja errores
+        },
       });
     } else {
       console.error('ID del producto no válido');
-      // Puedes redirigir o mostrar un mensaje de error aquí
+      this.router.navigate(['/productos']); // Redirige si no hay ID válido
     }
 
-    // Obtener categorías (si las necesitas)
-    this.categoriesService.getAll().subscribe((data) => {
-      this.categorias = data;
+    // Obtener categorías disponibles
+    this.categoriesService.getAll().subscribe({
+      next: (data) => (this.categorias = data),
+      error: (err) => console.error('Error al obtener categorías:', err),
     });
   }
 

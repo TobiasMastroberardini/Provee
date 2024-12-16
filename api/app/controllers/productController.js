@@ -71,16 +71,32 @@ class ProductController {
   }
 
   // Actualizar un producto existente
+  // Actualizar un producto existente
   static async update(req, res) {
     const { id } = req.params;
-    const updatedData = req.body;
-    const images = req.files;
+    const updatedData = req.body; // Datos enviados en la solicitud
+    const images = req.files; // Imágenes cargadas (si las hay)
 
     try {
-      // Si 'images' es un campo de la tabla, procesarlo como JSON
-      if (updatedData.images && Array.isArray(updatedData.images)) {
-        updatedData.images = JSON.stringify(updatedData.images);
+      // Validar ID del producto
+      if (!id || isNaN(Number(id))) {
+        return res.status(400).json({ message: "ID del producto no válido" });
       }
+
+      // Validar datos obligatorios
+      if (
+        !updatedData.nombre ||
+        !updatedData.precio ||
+        !updatedData.cantidad_disponible
+      ) {
+        return res.status(400).json({
+          message:
+            "Faltan datos obligatorios (nombre, precio, cantidad_disponible)",
+        });
+      }
+
+      console.log(`Actualizando producto con ID: ${id}`);
+      console.log("Datos recibidos:", updatedData);
 
       // Actualizar los datos del producto
       const affectedRows = await Product.updateProduct(id, updatedData);
@@ -89,22 +105,35 @@ class ProductController {
         return res.status(404).json({ message: "Producto no encontrado" });
       }
 
-      // Manejar imágenes
-      if (images && images.length > 0) {
+      console.log(`Producto ${id} actualizado correctamente.`);
+
+      // Manejar imágenes si se han enviado
+      if (images && Array.isArray(images) && images.length > 0) {
+        console.log(
+          `Procesando nuevas imágenes para el producto ${id}:`,
+          images
+        );
+
+        // Obtener las rutas de las nuevas imágenes
         const imageUrls = images.map((file) => `/uploads/${file.filename}`);
 
-        // Eliminar las imágenes existentes antes de agregar las nuevas
+        // Eliminar imágenes existentes del producto
         await Product.deleteProductImages(id);
-        await Product.addProductImages(id, imageUrls);
-      }
+        console.log(`Imágenes existentes del producto ${id} eliminadas.`);
 
-      const newPrice = req.body.precio;
-      await Cart.updatePriceItem(id, newPrice);
+        // Insertar nuevas imágenes
+        await Product.addProductImages(id, imageUrls);
+        console.log(`Nuevas imágenes asociadas al producto ${id}.`);
+      }
 
       res.status(200).json({ message: "Producto actualizado correctamente" });
     } catch (error) {
       console.error("Error al actualizar el producto:", error);
-      res.status(500).json({ message: "Error al actualizar el producto" });
+
+      res.status(500).json({
+        message: "Error al actualizar el producto",
+        error: error.message,
+      });
     }
   }
 

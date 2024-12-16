@@ -58,8 +58,19 @@
         type="checkbox"
       />
     </div>
+    <div *ngIf="product.images && product.images.length > 0">
+      <h4>Imágenes actuales:</h4>
+      <div class="image-preview">
+        <img
+          *ngFor="let image of product.images"
+          [src]="image.url"
+          alt="Imagen del producto"
+          class="preview-image"
+        />
+      </div>
+    </div>
     <div>
-      <label for="images">Imágenes</label>
+      <label for="images">Seleccionar nuevas imágenes:</label>
       <input
         id="images"
         type="file"
@@ -67,6 +78,7 @@
         multiple
       />
     </div>
+
     <button type="submit">Guardar Cambios</button>
   </form>
 </div>
