@@ -46,6 +46,10 @@ class UserService {
       throw new Error("No se pudo enviar el correo."); // Lanza el error para manejo posterior
     }
   }
+
+  static async comparePasswords(password, hashedPassword) {
+    return await bcrypt.compare(password, hashedPassword);
+  }
 }
 
 module.exports = UserService;

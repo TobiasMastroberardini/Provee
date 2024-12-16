@@ -1,7 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { AlertService } from '../alert/alert.service';
 
 @Injectable({
@@ -11,7 +19,7 @@ export class AuthService {
   private baseUrl = 'http://localhost:3005/api/auth';
   private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged());
   isLogged$ = this.isLoggedSubject.asObservable();
-
+  private userId: number = -1;
   constructor(
     private http: HttpClient,
     private alertService: AlertService,
@@ -103,5 +111,55 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/recover-password`, body, {
       headers,
     });
+  }
+
+  // Cambiar la contraseña
+  changePassword(data: { newPassword: string }): Observable<any> {
+    const token = this.getToken();
+
+    if (!token) {
+      this.alertService.showAlert('No estás autenticado. Inicia sesión.');
+      return of(null);
+    }
+
+    // Obtener el usuario logueado para obtener su id
+    return this.getUserLogged().pipe(
+      tap((user) => {
+        if (user) {
+          this.setUserId(user.id); // Establecer el userId al obtener el usuario
+        }
+      }),
+      switchMap(() => {
+        // Asegurarse de que `this.userId` se haya establecido correctamente
+        if (this.userId === -1) {
+          this.alertService.showAlert('No se pudo obtener el ID del usuario.');
+          return of(null);
+        }
+
+        // Crear el objeto que será enviado con el formato esperado por el backend
+        const dataWithUserId = {
+          id: this.userId,
+          newPassword: data.newPassword,
+        };
+
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        });
+
+        return this.http.post(
+          `${this.baseUrl}/change-password`,
+          dataWithUserId,
+          { headers }
+        );
+      }),
+      catchError((error) => {
+        console.error('Error al cambiar la contraseña:', error);
+        return of(null);
+      })
+    );
+  }
+
+  setUserId(id: number) {
+    this.userId = id;
   }
 }

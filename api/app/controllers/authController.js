@@ -165,6 +165,36 @@ class Auth {
       res.status(500).json({ message: "Error en el servidor" });
     }
   }
+
+  static async changePass(req, res) {
+    try {
+      const { newPassword, id } = req.body;
+
+      // Validación básica de entrada
+      if (!newPassword || !id) {
+        return res.status(400).json({ message: "Datos incompletos" });
+      }
+
+      const user = await userModel.getUserById(id);
+
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      // Encriptar nueva contraseña
+      const hashedPassword = await UserService.encryptPassword(newPassword);
+
+      // Actualizar contraseña en la base de datos
+      await userModel.updatePassword(id, hashedPassword);
+
+      return res
+        .status(200)
+        .json({ message: "Contraseña cambiada exitosamente" });
+    } catch (error) {
+      console.error("Error al cambiar la contraseña:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
+    }
+  }
 }
 
 module.exports = Auth;

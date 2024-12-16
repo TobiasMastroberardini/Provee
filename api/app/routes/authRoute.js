@@ -31,4 +31,6 @@ router.post(
   Auth.recoverPassword
 );
 
+router.post("/change-password", authMiddleware.verifyToken, Auth.changePass);
+
 module.exports = router;
