@@ -36,21 +36,42 @@ class Product {
 
   static async getAllProducts() {
     try {
-      // Consulta para obtener todos los productos
-      const [products] = await db.query("SELECT * FROM products");
+      // Consulta para obtener todos los productos con el nombre de la categoría utilizando JOIN
+      const query = `
+      SELECT p.*, c.nombre AS categoria_name, pi.imagen_url
+      FROM products p
+      LEFT JOIN categories c ON p.categoria_id = c.id
+      LEFT JOIN product_images pi ON p.id = pi.product_id
+    `;
 
-      // Consulta para obtener todas las imágenes
-      const [images] = await db.query("SELECT * FROM product_images");
+      const [result] = await db.query(query);
 
-      // Añadir imágenes a sus productos correspondientes
-      const productsWithImages = products.map((product) => {
-        const productImages = images
-          .filter((image) => image.product_id === product.id)
-          .map((image) => image.imagen_url); // Cambia a imagen_url
-        return { ...product, images: productImages };
-      });
+      // Agrupar las imágenes de cada producto
+      const productsWithDetails = result.reduce((acc, product) => {
+        // Verificar si el producto ya existe en el acumulador
+        let existingProduct = acc.find((item) => item.id === product.id);
 
-      return productsWithImages; // Devuelve los productos con sus imágenes
+        if (!existingProduct) {
+          // Si el producto no existe, crear uno nuevo y agregarlo
+          existingProduct = {
+            ...product,
+            images: [],
+          };
+          acc.push(existingProduct);
+        }
+
+        // Agregar la imagen del producto al campo 'images'
+        if (
+          product.imagen_url &&
+          !existingProduct.images.includes(product.imagen_url)
+        ) {
+          existingProduct.images.push(product.imagen_url);
+        }
+
+        return acc;
+      }, []);
+
+      return productsWithDetails; // Devuelve los productos con sus imágenes y nombre de categoría
     } catch (error) {
       throw error; // Propaga el error al controlador
     }
