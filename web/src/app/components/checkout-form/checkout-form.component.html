@@ -1,0 +1,126 @@
+<div class="container mx-auto p-6 bg-white shadow-lg rounded-lg max-w-3xl">
+  <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">
+    Detalles de la compras
+  </h2>
+
+  <!-- Formulario -->
+  <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" novalidate>
+    <!-- Nombre y Apellido -->
+    <div class="mb-4">
+      <label for="fullName" class="block text-gray-700 font-medium mb-2"
+        >Nombre y Apellido</label
+      >
+      <input
+        id="fullName"
+        type="text"
+        formControlName="fullName"
+        class="form-control block w-full p-2 border rounded-lg"
+        placeholder="Juan Pérez"
+      />
+    </div>
+
+    <!-- Email -->
+    <div class="mb-4">
+      <label for="email" class="block text-gray-700 font-medium mb-2"
+        >Email</label
+      >
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        class="form-control block w-full p-2 border rounded-lg"
+        placeholder="example@email.com"
+      />
+    </div>
+
+    <!-- Teléfono -->
+    <div class="mb-4">
+      <label for="phone" class="block text-gray-700 font-medium mb-2"
+        >Teléfono</label
+      >
+      <input
+        id="phone"
+        type="text"
+        formControlName="phone"
+        class="form-control block w-full p-2 border rounded-lg"
+        placeholder="1122334455"
+      />
+    </div>
+
+    <!-- Opciones de entrega -->
+    <div class="flex justify-center space-x-6 mb-6">
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="deliveryOption"
+          id="localPickup"
+          value="local"
+          formControlName="deliveryOption"
+          (change)="toggleDelivery('local')"
+          checked
+        />
+        <label class="form-check-label text-lg text-gray-600" for="localPickup">
+          Retiro en el local
+        </label>
+      </div>
+
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="deliveryOption"
+          id="homeDelivery"
+          value="delivery"
+          formControlName="deliveryOption"
+          (change)="toggleDelivery('delivery')"
+        />
+        <label
+          class="form-check-label text-lg text-gray-600"
+          for="homeDelivery"
+        >
+          Envío a domicilio
+        </label>
+      </div>
+    </div>
+
+    <!-- Selección de ciudad -->
+    <div *ngIf="isDelivery" class="mb-4">
+      <label for="city" class="block text-gray-700 font-medium mb-2"
+        >Ciudad</label
+      >
+      <select
+        id="city"
+        formControlName="city"
+        class="form-select block w-full p-2 border rounded-lg"
+      >
+        <option value="" disabled selected>-- Seleccione su ciudad --</option>
+        <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+      </select>
+    </div>
+
+    <!-- Dirección -->
+    <div *ngIf="isDelivery" class="mb-4">
+      <label for="address" class="block text-gray-700 font-medium mb-2"
+        >Dirección</label
+      >
+      <input
+        id="address"
+        type="text"
+        formControlName="address"
+        class="form-control block w-full p-2 border rounded-lg"
+        placeholder="Calle 123, Piso 2, Dpto. B"
+      />
+    </div>
+
+    <!-- Botón Ir a pagar -->
+    <div class="text-center mt-6">
+      <button
+        type="submit"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"
+      >
+        Ir a pagar
+      </button>
+    </div>
+  </form>
+</div>

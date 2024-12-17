@@ -4,6 +4,7 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
 import { CartComponent } from './components/cart/cart.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { ChangePassComponent } from './components/change-pass/change-pass.component';
+import { CheckoutFormComponent } from './components/checkout-form/checkout-form.component';
 import { EditCategoryComponent } from './components/edit-category/edit-category.component';
 import { EditProductComponent } from './components/edit-product/edit-product.component';
 import { HomeComponent } from './components/home/home.component';
@@ -72,6 +73,10 @@ export const routes: Routes = [
   {
     path: 'change-pass',
     component: ChangePassComponent,
+  },
+  {
+    path: 'checkout-form',
+    component: CheckoutFormComponent,
   },
   {
     path: 'edit-product/:id',
