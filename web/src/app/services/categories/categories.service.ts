@@ -51,7 +51,7 @@ export class CategoriesService {
 
   update(id: number, category: any): Observable<any> {
     const token = this.authService.getToken();
-
+    console.log('el id que recibe el servicio es: ', id);
     if (!token) {
       this.alertService.showAlert('No estás autenticado. Inicia sesión.');
       return of(null);
@@ -85,6 +85,6 @@ export class CategoriesService {
       Authorization: `Bearer ${token}`, // Agrega el token al encabezado
     });
 
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
   }
 }

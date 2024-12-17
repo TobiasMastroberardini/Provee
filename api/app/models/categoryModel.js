@@ -10,8 +10,15 @@ class Category {
     }
   }
 
-  static getCategoryById(id, callback) {
-    db.query("SELECT * FROM categories WHERE id = ?", [id], callback);
+  static async getCategoryById(id) {
+    try {
+      const [rows] = await db.query("SELECT * FROM categories WHERE id = ?", [
+        id,
+      ]);
+      return rows[0];
+    } catch (error) {
+      throw error;
+    }
   }
 
   static async createCategory(data) {
@@ -23,12 +30,24 @@ class Category {
     }
   }
 
-  static updateCategory(id, data, callback) {
-    db.query("UPDATE categories SET ? WHERE id = ?", [data, id], callback);
+  static async updateCategory(id, data) {
+    try {
+      const [result] = await db.query("UPDATE categories SET ? WHERE id = ?", [
+        data,
+        id,
+      ]);
+      return result.affectedRows; // Devuelve el número de filas afectadas
+    } catch (error) {
+      throw error;
+    }
   }
 
-  static deleteCategory(id, callback) {
-    db.query("DELETE FROM categories WHERE id = ?", [id], callback);
+  static async deleteCategory(id) {
+    try {
+      await db.query("DELETE FROM categories WHERE id = ?", [id]);
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

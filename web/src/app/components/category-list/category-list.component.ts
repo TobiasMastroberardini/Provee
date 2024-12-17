@@ -37,7 +37,7 @@ export class CategoryListComponent implements OnInit {
 
   // Método para redirigir a la página de editar categoria
   redirectToEditCategory(category: any): void {
-    this.router.navigate([`/edit-product/${category.id}`]); // Ajusta la ruta según tu configuración de enrutamiento
+    this.router.navigate([`/edit-category/${category.id}`]); // Ajusta la ruta según tu configuración de enrutamiento
   }
 
   // Método para eliminar un producto
@@ -49,9 +49,12 @@ export class CategoryListComponent implements OnInit {
     ) {
       this.categoriesService.delete(category.id).subscribe(
         () => {
+          console.log('id:' + category.id);
           this.loadCategories(); // Volver a cargar las categorias después de eliminar
         },
         (error) => {
+          console.log('id:' + category.id);
+
           console.error('Error al eliminar la categoria', error);
         }
       );

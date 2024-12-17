@@ -11,17 +11,18 @@ class CategoryController {
     }
   }
 
-  static getById(req, res) {
+  static async getById(req, res) {
     const { id } = req.params;
-    Category.getCategoryById(id, (error, results) => {
-      if (error) {
-        return res.status(500).json({ error });
+    try {
+      const category = await Category.getCategoryById(id);
+      if (!category) {
+        return res.status(404).json({ message: "Categoria no encontrada" });
       }
-      if (results.length === 0) {
-        return res.status(404).json({ message: "Categoría no encontrada" });
-      }
-      return res.json(results[0]);
-    });
+      res.status(200).json(category);
+    } catch (error) {
+      console.error("Error al obtener la categoria:", error);
+      res.status(500).json({ message: "Error al obtener la categoria" });
+    }
   }
 
   static async create(req, res) {
@@ -38,19 +39,21 @@ class CategoryController {
     }
   }
 
-  static update(req, res) {
+  static async update(req, res) {
     const { id } = req.params;
     const updatedData = req.body;
-
-    Category.updateCategory(id, updatedData, (error, result) => {
-      if (error) {
-        return res.status(500).json({ error });
-      }
+    try {
+      console.log("el id recibido en el back: ", id);
+      const result = await Category.updateCategory(id, updatedData);
       if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Categoría no encontrada" });
+        return res.status(404).json({ message: "Categoria no encontrado" });
       }
-      return res.json({ message: "Categoría actualizada" });
-    });
+      return res.json({ message: "Categoria actualizado" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: "Error al actualizar la categoria" });
+    }
   }
 
   static delete(req, res) {
