@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CategoriesService } from '../../services/categories/categories.service';
+import { CategoryListComponent } from '../category-list/category-list.component';
 
 @Component({
   selector: 'app-create-category',
@@ -14,7 +15,10 @@ export class CreateCategoryComponent {
   isModalVisible: boolean = false;
   nombre = '';
 
-  constructor(private categoriesService: CategoriesService) {}
+  constructor(
+    private categoriesService: CategoriesService,
+    private CategoryList: CategoryListComponent
+  ) {}
 
   toggleModal() {
     this.isModalVisible = !this.isModalVisible;
@@ -29,6 +33,7 @@ export class CreateCategoryComponent {
       (response) => {
         console.log('Categoría creada con éxito', response);
         this.toggleModal(); // Cerrar el modal
+        this.CategoryList.loadCategories();
       },
       (error) => {
         console.error('Error al crear la categoría', error);

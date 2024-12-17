@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 import { CartComponent } from './components/cart/cart.component';
+import { CategoryListComponent } from './components/category-list/category-list.component';
 import { ChangePassComponent } from './components/change-pass/change-pass.component';
-import { CreateProductComponent } from './components/create-product/create-product.component';
+import { EditCategoryComponent } from './components/edit-category/edit-category.component';
 import { EditProductComponent } from './components/edit-product/edit-product.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
@@ -28,6 +30,11 @@ export const routes: Routes = [
   {
     path: 'product-table',
     component: ProductTableComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'admin-panel',
+    component: AdminPanelComponent,
     canActivate: [AdminGuard],
   },
   {
@@ -67,13 +74,18 @@ export const routes: Routes = [
     component: ChangePassComponent,
   },
   {
-    path: 'create-product',
-    component: CreateProductComponent,
+    path: 'edit-product/:id',
+    component: EditProductComponent,
     canActivate: [AdminGuard],
   },
   {
-    path: 'edit-product/:id',
-    component: EditProductComponent,
+    path: 'edit-category/:id',
+    component: EditCategoryComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'category-list',
+    component: CategoryListComponent,
     canActivate: [AdminGuard],
   },
   {

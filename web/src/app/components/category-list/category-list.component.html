@@ -1,15 +1,14 @@
-<section class="container px-4 mx-auto">
+<section class="p-4 mx-auto lg:max-w-7xl sm:max-w-full">
   <div class="flex items-center gap-x-3">
     <div>
       <h2 class="text-lg font-medium text-gray-800">LISTA DE PRODUCTOS</h2>
     </div>
     <div class="right">
       <div class="ml-auto add-product cont">
-        <app-create-product></app-create-product>
+        <app-create-category></app-create-category>
       </div>
     </div>
   </div>
-
   <div class="flex flex-col mt-6">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -28,87 +27,26 @@
                   scope="col"
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
                 >
-                  Precio
-                </th>
-
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
-                >
-                  Descripcion
-                </th>
-
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
-                >
-                  Oferta
-                </th>
-
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
-                >
-                  Categoria
-                </th>
-
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
-                >
-                  Stock
-                </th>
-
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
-                >
                   Acciones
                 </th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr *ngFor="let product of products">
+              <tr *ngFor="let category of categories">
                 <td
                   class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
                 >
                   <div class="inline-flex items-center gap-x-3">
-                    <div class="flex items-center gap-x-2">
-                      <img
-                        class="object-cover w-10 h-10 rounded-full"
-                        src="http://localhost:3005/api{{ product.images[0] }}"
-                        alt="{{ product.nombre }}"
-                      />
-                      <div>
-                        <h2 class="font-medium text-gray-800">
-                          {{ product.nombre }}
-                        </h2>
-                      </div>
-                    </div>
+                    <h2 class="font-medium text-gray-800">
+                      {{ category.nombre }}
+                    </h2>
                   </div>
-                </td>
-
-                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                  {{ product.precio | currency }}
-                </td>
-                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                  {{ product.descripcion }}
-                </td>
-                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                  <p *ngIf="product.on_sale === 0">No</p>
-                  <p *ngIf="product.on_sale === 1">Si</p>
-                </td>
-                <td class="px-4 py-4 text-sm text-gray-5000 whitespace-nowrap">
-                  {{ product.categoria_name }}
-                </td>
-                <td class="px-4 py-4 text-sm text-gray-5000 whitespace-nowrap">
-                  {{ product.cantidad_disponible }}
                 </td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-6">
                     <button
-                      (click)="deleteProduct(product)"
+                      (click)="delete(category.id)"
                       class="text-gray-500 transition-colors duration-200 hover:text-red-500 focus:outline-none"
                     >
                       <svg
@@ -128,7 +66,7 @@
                     </button>
 
                     <button
-                      (click)="redirectToEditProduct(product)"
+                      (click)="redirectToEditCategory(category)"
                       class="text-gray-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
                     >
                       <svg

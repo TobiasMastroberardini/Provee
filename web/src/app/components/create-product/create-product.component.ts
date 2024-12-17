@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CategoriesService } from '../../services/categories/categories.service';
 import { ProductService } from '../../services/products/product.service';
+import { ProductTableComponent } from '../prooduct-table/prooduct-table.component';
 
 @Component({
   selector: 'app-create-product',
@@ -27,7 +28,8 @@ export class CreateProductComponent implements OnInit {
 
   constructor(
     private categoriesService: CategoriesService,
-    private productService: ProductService
+    private productService: ProductService,
+    private productTable: ProductTableComponent
   ) {}
 
   toggleModal() {
@@ -76,6 +78,7 @@ export class CreateProductComponent implements OnInit {
       (response) => {
         console.log('Producto creado', response);
         this.toggleModal(); // Cerrar el modal
+        this.productTable.loadProducts();
       },
       (error) => {
         console.error('Error al crear producto', error);

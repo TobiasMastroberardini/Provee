@@ -2,13 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/products/product.service';
-import { CreateCategoryComponent } from '../create-category/create-category.component'; // Ajusta la ruta según corresponda
 import { CreateProductComponent } from '../create-product/create-product.component';
 
 @Component({
   selector: 'app-product-table',
   standalone: true,
-  imports: [CommonModule, CreateProductComponent, CreateCategoryComponent],
+  imports: [CommonModule, CreateProductComponent],
   templateUrl: './prooduct-table.component.html',
   styleUrl: './prooduct-table.component.scss',
 })
@@ -31,11 +30,6 @@ export class ProductTableComponent implements OnInit {
         console.error('Error al cargar los productos', error);
       }
     );
-  }
-
-  // Método para redirigir a la página de agregar producto
-  redirectToAddProduct(): void {
-    this.router.navigate(['/add-product']); // Ajusta la ruta según tu configuración de enrutamiento
   }
 
   // Método para redirigir a la página de editar producto
