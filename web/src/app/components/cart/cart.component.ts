@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { CartService } from '../../services/cart/cart.service';
 import { PaymentService } from '../../services/payment/payment.service';
@@ -23,7 +24,8 @@ export class CartComponent implements OnInit {
     private cartService: CartService,
     private productService: ProductService,
     private http: HttpClient,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -75,15 +77,7 @@ export class CartComponent implements OnInit {
     );
   }
 
-  proceedToPayment() {
-    this.cartService.createPayment().subscribe(
-      (response) => {
-        window.location.href = response.init_point; // Redirige a la URL de Mercado Pago
-      },
-      (error) => {
-        console.error('Error al crear el pago:', error);
-        // Manejo de errores apropiado para el usuario
-      }
-    );
+  proceedToCheckoutForm() {
+    this.router.navigate(['/checkout-form']);
   }
 }

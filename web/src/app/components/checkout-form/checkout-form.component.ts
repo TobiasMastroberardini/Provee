@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { CartService } from '../../services/cart/cart.service';
 
 @Component({
   selector: 'app-checkout-form',
@@ -17,7 +18,6 @@ import {
 export class CheckoutFormComponent {
   checkoutForm: FormGroup;
   isDelivery: boolean = false;
-
   // Lista de ciudades (puedes ampliarla)
   cities: string[] = [
     'La Plata',
@@ -30,7 +30,7 @@ export class CheckoutFormComponent {
     'Junín',
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private cartService: CartService) {
     this.checkoutForm = this.fb.group({
       fullName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
@@ -51,6 +51,15 @@ export class CheckoutFormComponent {
   onSubmit() {
     if (this.checkoutForm.valid) {
       console.log('Formulario enviado:', this.checkoutForm.value);
+      this.cartService.createPayment().subscribe(
+        (response) => {
+          window.location.href = response.init_point; // Redirige a la URL de Mercado Pago
+        },
+        (error) => {
+          console.error('Error al crear el pago:', error);
+          // Manejo de errores apropiado para el usuario
+        }
+      );
       alert('Datos enviados correctamente. Ahora puedes ir a pagar.');
     } else {
       alert('Por favor, completa todos los campos obligatorios.');
