@@ -72,6 +72,22 @@ class CategoryController {
       return res.status(500).json({ error: "Error interno del servidor" });
     }
   }
+
+  static async getByFilter(req, res) {
+    const conditions = req.query; // Obtener los filtros de la URL
+    try {
+      // Modificar condiciones de búsqueda para buscar coincidencias parciales en el nombre
+      if (conditions.nombre) {
+        conditions.nombre = `%${conditions.nombre}%`; // Añadir comodines a la búsqueda por nombre
+      }
+
+      const categories = await Category.getCategoryByCondition(conditions);
+      res.status(200).json(categories);
+    } catch (error) {
+      console.error("Error al obtener las Categorias con condiciones:", error);
+      res.status(500).json({ message: "Error al obtener categorias" });
+    }
+  }
 }
 
 module.exports = CategoryController;

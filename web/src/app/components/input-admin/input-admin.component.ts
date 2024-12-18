@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -11,15 +11,16 @@ import { Router } from '@angular/router';
 })
 export class InputAdminComponent {
   searchQuery: string = '';
-
+  @Input() search: string = '';
   constructor(
     private router: Router // Inyecta Router
   ) {}
   // Función para actualizar la URL con el valor del input de búsqueda
   updateUrl(): void {
     if (this.searchQuery) {
+      console.log('esta es: ', this.search);
       // Navegar a la ruta /products con el parámetro query `nombre`
-      this.router.navigate(['/category-list'], {
+      this.router.navigate([this.search], {
         queryParams: { nombre: this.searchQuery },
       });
     }

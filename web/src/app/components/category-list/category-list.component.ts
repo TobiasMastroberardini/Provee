@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CategoriesService } from '../../services/categories/categories.service';
 import { AdminPanelComponent } from '../admin-panel/admin-panel.component';
 import { CreateCategoryComponent } from '../create-category/create-category.component';
@@ -20,14 +20,25 @@ import { InputAdminComponent } from '../input-admin/input-admin.component';
 })
 export class CategoryListComponent implements OnInit {
   categories: any[] = [];
+  productName: string = '';
+  categoryList = 'category-list';
 
   constructor(
     private categoriesService: CategoriesService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.route.queryParams.subscribe((queryParams) => {
+      if (queryParams['nombre']) {
+        const name = queryParams['nombre'];
+        this.productName = name;
+        this.fetchByFilter(`nombre=${name}`); // Filtra por nombre
+      } else {
+        this.loadCategories(); // Si no hay filtros, obtener todos los productos
+      }
+    });
   }
 
   // Método para cargar los productos desde el servicio
@@ -42,6 +53,17 @@ export class CategoryListComponent implements OnInit {
     );
   }
 
+  fetchByFilter(filter: string): void {
+    this.categoriesService.getByFilter(filter).subscribe(
+      (data) => {
+        console.log(`Fetched categories with filter ${filter}:`, data);
+        this.categories = data;
+      },
+      (error) => {
+        console.error('Error fetching filtered categories', error);
+      }
+    );
+  }
   // Método para redirigir a la página de editar categoria
   redirectToEditCategory(category: any): void {
     this.router.navigate([`/edit-category/${category.id}`]); // Ajusta la ruta según tu configuración de enrutamiento

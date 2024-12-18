@@ -24,6 +24,10 @@ export class CategoriesService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
+  getByFilter(filter: string) {
+    return this.http.get<any>(`${this.apiUrl}/filter?${filter}`);
+  }
+
   create(categoryData: any): Observable<any> {
     const token = this.authService.getToken();
 

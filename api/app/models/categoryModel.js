@@ -21,6 +21,35 @@ class Category {
     }
   }
 
+  static async getCategoryByCondition(conditions) {
+    try {
+      // Base de la consulta
+      let query = "SELECT * FROM categories";
+      const values = [];
+
+      // Añadir condiciones dinámicamente
+      if (Object.keys(conditions).length > 0) {
+        const whereClauses = Object.entries(conditions).map(([key, value]) => {
+          if (key === "nombre") {
+            // Asegurarse de que se agreguen los comodines '%' para una búsqueda parcial
+            values.push(`%${value}%`); // Buscar coincidencias parciales
+            return `${key} LIKE ?`; // Usar LIKE en lugar de '='
+          }
+          values.push(value);
+          return `${key} = ?`;
+        });
+        query += " WHERE " + whereClauses.join(" AND ");
+      }
+
+      // Ejecutar la consulta para obtener los productos
+      const [categories] = await db.query(query, values);
+
+      return categories; // Devuelve los productos con sus imágenes
+    } catch (error) {
+      throw error; // Propaga el error al controlador
+    }
+  }
+
   static async createCategory(data) {
     try {
       const [result] = await db.query("INSERT INTO categories SET ?", data);

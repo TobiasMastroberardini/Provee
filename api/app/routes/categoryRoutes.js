@@ -5,7 +5,9 @@ const AuthMiddleware = require("../middlewares/authMiddleware");
 
 // Rutas para categorías
 router.get("/", CategoryController.getAll);
+router.get("/filter", CategoryController.getByFilter);
 router.get("/:id", CategoryController.getById);
+
 router.post(
   "/",
   AuthMiddleware.verifyToken,

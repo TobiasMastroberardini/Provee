@@ -9,6 +9,7 @@ import { EditCategoryComponent } from './components/edit-category/edit-category.
 import { EditProductComponent } from './components/edit-product/edit-product.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
+import { NotAuthorizedComponent } from './components/not-authorized/not-authorized.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ProductCardComponent } from './components/product-card/product-card.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
@@ -96,6 +97,10 @@ export const routes: Routes = [
   {
     path: 'success',
     component: SuccessComponent,
+  },
+  {
+    path: 'not-authorized',
+    component: NotAuthorizedComponent,
   },
   {
     path: '**', // Ruta para manejar URLs no encontradas

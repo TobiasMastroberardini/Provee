@@ -1,12 +1,12 @@
 <section class="container px-4 mx-auto">
-  <div class="flex items-center gap-x-3">
-    <div>
-      <h2 class="text-lg font-medium text-gray-800">LISTA DE PRODUCTOS</h2>
-    </div>
-    <div class="right">
-      <div class="ml-auto add-product cont">
-        <app-create-product></app-create-product>
-      </div>
+  <div class="flex flex-col items-center gap-y-4 cont-head">
+    <!-- Título en la parte superior -->
+    <h2 class="text-lg font-medium text-gray-800">LISTA DE PRODUCTOS</h2>
+
+    <!-- Contenedor de los dos componentes alineados horizontalmente en el centro y a la misma altura -->
+    <div class="flex items-center gap-x-3">
+      <app-create-product></app-create-product>
+      <app-input-admin [search]="productTable"></app-input-admin>
     </div>
   </div>
 
