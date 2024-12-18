@@ -48,11 +48,11 @@ const createPayment = async (req, res) => {
       items: items,
       back_urls: {
         success: "http://localhost:3005/api/payment/success",
-        failure: "http://localhost:4200/failure",
+        failure: "http://localhost:4200/failuresape",
         pending: "http://localhost:4200/pending",
       },
       auto_return: "approved",
-      //   external_reference: String(cart_id), // Convertir a string
+      external_reference: String(cart_id), // Convertir a string
     };
     console.log(7);
 
@@ -69,8 +69,10 @@ const paymentSuccess = async (req, res) => {
   try {
     const { external_reference, status } = req.query;
 
-    if (status !== "approved") {
-      return res.redirect("http://localhost:4200/failure");
+    if (status) {
+      if (status !== "approved") {
+        return res.redirect("http://localhost:4200/failureenelstatus");
+      }
     }
 
     const cart_id = parseInt(external_reference, 10);
@@ -93,4 +95,5 @@ const paymentSuccess = async (req, res) => {
 
 module.exports = {
   createPayment,
+  paymentSuccess,
 };
