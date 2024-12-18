@@ -4,34 +4,58 @@ class Product {
   static async getPaginatedProducts(page, limit) {
     const offset = (page - 1) * limit;
 
-    // Obtener productos paginados
-    const [products] = await db.query(
-      "SELECT * FROM products LIMIT ? OFFSET ?",
-      [limit, offset]
-    );
+    // Consulta para obtener productos con el nombre de la categoría utilizando JOIN
+    const query = `
+    SELECT p.*, c.nombre AS categoria_name, pi.imagen_url
+    FROM products p
+    LEFT JOIN categories c ON p.categoria_id = c.id
+    LEFT JOIN product_images pi ON p.id = pi.product_id
+    LIMIT ? OFFSET ?
+  `;
 
-    // Obtener todas las imágenes
-    const [images] = await db.query("SELECT * FROM product_images");
+    try {
+      // Obtener productos paginados con sus imágenes y categorías
+      const [result] = await db.query(query, [limit, offset]);
 
-    // Relacionar imágenes con productos
-    const productsWithImages = products.map((product) => {
-      const productImages = images
-        .filter((image) => image.product_id === product.id)
-        .map((image) => image.imagen_url);
-      return { ...product, images: productImages };
-    });
+      // Agrupar las imágenes de cada producto
+      const productsWithDetails = result.reduce((acc, product) => {
+        // Verificar si el producto ya existe en el acumulador
+        let existingProduct = acc.find((item) => item.id === product.id);
 
-    // Contar el total de productos
-    const [totalResult] = await db.query(
-      "SELECT COUNT(*) AS total FROM products"
-    );
-    const totalProducts = totalResult[0].total;
+        if (!existingProduct) {
+          // Si el producto no existe, crear uno nuevo y agregarlo
+          existingProduct = {
+            ...product,
+            images: [],
+          };
+          acc.push(existingProduct);
+        }
 
-    return {
-      data: productsWithImages,
-      totalProducts,
-      totalPages: Math.ceil(totalProducts / limit),
-    };
+        // Agregar la imagen del producto al campo 'images'
+        if (
+          product.imagen_url &&
+          !existingProduct.images.includes(product.imagen_url)
+        ) {
+          existingProduct.images.push(product.imagen_url);
+        }
+
+        return acc;
+      }, []);
+
+      // Contar el total de productos
+      const [totalResult] = await db.query(
+        "SELECT COUNT(*) AS total FROM products"
+      );
+      const totalProducts = totalResult[0].total;
+
+      return {
+        data: productsWithDetails, // Devuelve los productos con sus imágenes y nombre de categoría
+        totalProducts,
+        totalPages: Math.ceil(totalProducts / limit),
+      };
+    } catch (error) {
+      throw error; // Propaga el error al controlador
+    }
   }
 
   static async getAllProducts() {

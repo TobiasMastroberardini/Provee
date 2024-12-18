@@ -3,12 +3,18 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CategoriesService } from '../../services/categories/categories.service';
 import { ProductService } from '../../services/products/product.service';
+import { PaginationComponent } from '../pagination/pagination.component';
 import { ProductCardComponent } from '../product-card/product-card.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent, RouterModule],
+  imports: [
+    CommonModule,
+    ProductCardComponent,
+    RouterModule,
+    PaginationComponent,
+  ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
 })

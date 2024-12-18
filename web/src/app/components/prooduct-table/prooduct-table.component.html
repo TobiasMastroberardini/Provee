@@ -98,10 +98,10 @@
                   <p *ngIf="product.on_sale === 0">No</p>
                   <p *ngIf="product.on_sale === 1">Si</p>
                 </td>
-                <td class="px-4 py-4 text-sm text-gray-5000 whitespace-nowrap">
+                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                   {{ product.categoria_name }}
                 </td>
-                <td class="px-4 py-4 text-sm text-gray-5000 whitespace-nowrap">
+                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                   {{ product.cantidad_disponible }}
                 </td>
 
@@ -154,5 +154,12 @@
         </div>
       </div>
     </div>
+  </div>
+  <div>
+    <app-pagination
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (pageChange)="changePage($event)"
+    ></app-pagination>
   </div>
 </section>

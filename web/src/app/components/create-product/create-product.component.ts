@@ -78,7 +78,7 @@ export class CreateProductComponent implements OnInit {
       (response) => {
         console.log('Producto creado', response);
         this.toggleModal(); // Cerrar el modal
-        this.productTable.loadProducts();
+        this.productTable.fetchProducts();
       },
       (error) => {
         console.error('Error al crear producto', error);
