@@ -91,6 +91,18 @@ class Cart {
     }
   }
 
+  static async clearCart(cart_id) {
+    try {
+      const [result] = await db.query(
+        "DELETE FROM cart_items WHERE cart_id = ?",
+        [cart_id]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getCartItems(id) {
     try {
       const [rows] = await db.query(

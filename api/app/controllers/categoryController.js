@@ -1,4 +1,5 @@
 const Category = require("../models/categoryModel");
+const Product = require("../models/productModel");
 
 class CategoryController {
   static async getAll(req, res) {
@@ -56,18 +57,20 @@ class CategoryController {
     }
   }
 
-  static delete(req, res) {
-    const { id } = req.params;
-
-    Category.deleteCategory(id, (error, result) => {
-      if (error) {
-        return res.status(500).json({ error });
-      }
+  static async delete(req, res) {
+    try {
+      const { id } = req.params;
+      // Eliminar la categoría
+      const result = await Category.deleteCategory(id);
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Categoría no encontrada" });
       }
+
       return res.json({ message: "Categoría eliminada" });
-    });
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
+      return res.status(500).json({ error: "Error interno del servidor" });
+    }
   }
 }
 

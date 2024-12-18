@@ -1,25 +1,41 @@
-const db = require('../../database/database');
+const db = require("../../database/database");
 
-class Order {
-    static getAllOrders(callback) {
-        db.query('SELECT * FROM orders', callback);
-    }
+class OrderModel {
+  // Función estática para crear la orden
+  static async createOrder({
+    user_id,
+    total,
+    estado,
+    direccion_envio,
+    metodo_pago,
+  }) {
+    const query = `
+      INSERT INTO orders (user_id, total, estado, direccion_envio, metodo_pago)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const [result] = await db.execute(query, [
+      user_id,
+      total,
+      estado,
+      direccion_envio,
+      metodo_pago,
+    ]);
+    return result.insertId; // Retorna el ID de la orden creada
+  }
 
-    static getOrderById(id, callback) {
-        db.query('SELECT * FROM orders WHERE id = ?', [id], callback);
-    }
-
-    static createOrder(data, callback) {
-        db.query('INSERT INTO orders SET ?', data, callback);
-    }
-
-    static updateOrder(id, data, callback) {
-        db.query('UPDATE orders SET ? WHERE id = ?', [data, id], callback);
-    }
-
-    static deleteOrder(id, callback) {
-        db.query('DELETE FROM orders WHERE id = ?', [id], callback);
-    }
+  // Función estática para crear los detalles de la orden
+  static async createOrderItem({
+    order_id,
+    product_id,
+    cantidad,
+    precio_unitario,
+  }) {
+    const query = `
+      INSERT INTO order_items (order_id, product_id, cantidad, precio_unitario)
+      VALUES (?, ?, ?, ?)
+    `;
+    await db.execute(query, [order_id, product_id, cantidad, precio_unitario]);
+  }
 }
 
-module.exports = Order;
+module.exports = OrderModel;

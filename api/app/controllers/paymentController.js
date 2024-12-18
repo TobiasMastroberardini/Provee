@@ -47,11 +47,12 @@ const createPayment = async (req, res) => {
     const preference = {
       items: items,
       back_urls: {
-        success: "http://localhost:4200/success", // Cambia según tu aplicación
+        success: "http://localhost:3005/api/payment/success",
         failure: "http://localhost:4200/failure",
         pending: "http://localhost:4200/pending",
       },
       auto_return: "approved",
+      //   external_reference: String(cart_id), // Convertir a string
     };
     console.log(7);
 
@@ -61,6 +62,32 @@ const createPayment = async (req, res) => {
   } catch (error) {
     console.error("Error al crear la preferencia:", error);
     res.status(500).send("Error al crear la preferencia");
+  }
+};
+
+const paymentSuccess = async (req, res) => {
+  try {
+    const { external_reference, status } = req.query;
+
+    if (status !== "approved") {
+      return res.redirect("http://localhost:4200/failure");
+    }
+
+    const cart_id = parseInt(external_reference, 10);
+
+    // Vaciar el carrito
+    const result = await cartModel.clearCart(cart_id);
+    if (result) {
+      console.log(`Carrito con ID ${cart_id} vaciado correctamente.`);
+    } else {
+      console.warn(`No se encontró el carrito con ID ${cart_id} para vaciar.`);
+    }
+
+    // Redirigir al frontend
+    return res.redirect("http://localhost:4200/success");
+  } catch (error) {
+    console.error("Error al procesar el éxito del pago:", error);
+    return res.redirect("http://localhost:4200/failure");
   }
 };
 
