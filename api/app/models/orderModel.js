@@ -1,6 +1,29 @@
 const db = require("../../database/database");
 
 class OrderModel {
+  // Obtener todas las órdenes
+  static async getAll() {
+    try {
+      const query = "SELECT * FROM orders";
+      const [rows] = await db.query(query);
+      return rows;
+    } catch (error) {
+      console.error("Error al obtener las órdenes:", error);
+      throw new Error("Error al obtener las órdenes");
+    }
+  }
+
+  // Obtener una orden por ID
+  static async getById(id) {
+    try {
+      const query = "SELECT * FROM orders WHERE id = ?";
+      const [rows] = await db.query(query, [id]);
+      return rows;
+    } catch (error) {
+      console.error("Error al obtener la orden:", error);
+      throw new Error("Error al obtener la orden");
+    }
+  }
   // Función estática para crear la orden
   static async createOrder({
     user_id,
@@ -57,6 +80,57 @@ class OrderModel {
     } catch (error) {
       console.error("Error al insertar en order_items:", error);
       throw error;
+    }
+  }
+
+  // Actualizar una orden por ID
+  static async updateOrder(id, updatedData) {
+    try {
+      const query = `
+        UPDATE orders
+        SET ?
+        WHERE id = ?
+      `;
+      const [result] = await db.query(query, [updatedData, id]);
+      return result;
+    } catch (error) {
+      console.error("Error al actualizar la orden:", error);
+      throw new Error("Error al actualizar la orden");
+    }
+  }
+
+  // Eliminar una orden por ID
+  static async deleteOrder(id) {
+    try {
+      const query = "DELETE FROM orders WHERE id = ?";
+      const [result] = await db.query(query, [id]);
+      return result;
+    } catch (error) {
+      console.error("Error al eliminar la orden:", error);
+      throw new Error("Error al eliminar la orden");
+    }
+  }
+  // Obtener los ítems de una orden por ID
+  static async getOrderItems(order_id) {
+    try {
+      const query = "SELECT * FROM order_items WHERE order_id = ?";
+      const [rows] = await db.query(query, [order_id]);
+      return rows;
+    } catch (error) {
+      console.error("Error al obtener los ítems de la orden:", error);
+      throw new Error("Error al obtener los ítems de la orden");
+    }
+  }
+
+  // Obtener ítems de una orden por usuario
+  static async getOrderItemsByUser(user_id) {
+    try {
+      const query = "SELECT * FROM orders WHERE user_id = ?";
+      const [rows] = await db.query(query, [user_id]);
+      return rows;
+    } catch (error) {
+      console.error("Error al obtener los ítems por usuario:", error);
+      throw new Error("Error al obtener los ítems por usuario");
     }
   }
 }
