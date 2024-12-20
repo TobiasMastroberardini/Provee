@@ -1,0 +1,94 @@
+<section class="p-4 mx-auto lg:max-w-7xl sm:max-w-full">
+  <div class="flex flex-col items-center gap-y-4 cont-head">
+    <!-- Título en la parte superior -->
+    <h2 class="text-lg font-medium text-gray-800">LISTA DE ÓRDENES</h2>
+  </div>
+
+  <div *ngIf="loading" class="text-center mt-4">Cargando órdenes...</div>
+  <div *ngIf="!loading && orders.length === 0" class="text-center mt-4">
+    No hay órdenes disponibles.
+  </div>
+  <div *ngIf="!loading && orders.length > 0" class="flex flex-col mt-6">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+        <div class="overflow-hidden border border-gray-200 md:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
+                >
+                  Orden ID
+                </th>
+                <th
+                  scope="col"
+                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
+                >
+                  Total
+                </th>
+                <th
+                  scope="col"
+                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
+                >
+                  Estado
+                </th>
+                <th
+                  scope="col"
+                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
+                >
+                  Ítems
+                </th>
+                <th
+                  scope="col"
+                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
+                >
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let order of orders">
+                <td
+                  class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
+                >
+                  {{ order.id }}
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  {{ order.total | currency }}
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  {{ order.estado }}
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  <table class="min-w-full">
+                    <tr *ngFor="let item of order.items">
+                      <td class="px-4 py-2">
+                        Producto:
+                        <span class="bold-text">{{ item.product_id }}</span>
+                      </td>
+                      <td class="px-4 py-2">
+                        Cantidad:
+                        <span class="bold-text">{{ item.cantidad }}</span>
+                      </td>
+                      <td class="px-4 py-2">
+                        Precio:
+                        <span class="bold-text">{{
+                          item.precio_unitario | currency
+                        }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+
+                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                  <div class="flex items-center gap-x-6"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

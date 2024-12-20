@@ -11,6 +11,7 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { NotAuthorizedComponent } from './components/not-authorized/not-authorized.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { OrderListComponent } from './components/order-list/order-list.component';
 import { ProductCardComponent } from './components/product-card/product-card.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { ProductTableComponent } from './components/prooduct-table/prooduct-table.component';
@@ -92,6 +93,11 @@ export const routes: Routes = [
   {
     path: 'category-list',
     component: CategoryListComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'order-list',
+    component: OrderListComponent,
     canActivate: [AdminGuard],
   },
   {
