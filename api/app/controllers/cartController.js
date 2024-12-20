@@ -105,7 +105,23 @@ class CartController {
 
       const cartId = cart[0].id;
 
-      // Preparar el nuevo item para agregar
+      // Verificar si el item ya existe en el carrito
+      const existingItem = await Cart.getItemByProductIdAndCartId(
+        product_id,
+        cartId
+      );
+      if (existingItem.length > 0) {
+        // Si el item ya existe, actualizar la cantidad
+        const newQuantity = existingItem[0].quantity + quantity;
+        await Cart.updateItemQuantity(existingItem[0].id, newQuantity);
+        return res.status(200).json({
+          message: "Cantidad actualizada",
+          id: existingItem[0].id,
+          quantity: newQuantity,
+        });
+      }
+
+      // Si el item no existe, agregarlo al carrito
       const newItem = {
         cart_id: cartId,
         product_id,
@@ -121,9 +137,9 @@ class CartController {
       return res.status(201).json({ id: result.insertId, ...newItem });
     } catch (error) {
       console.error(error);
-      return res
-        .status(500)
-        .json({ error: "Error al agregar un producto al carrito" });
+      return res.status(500).json({
+        error: "Error al agregar un producto al carrito",
+      });
     }
   }
 

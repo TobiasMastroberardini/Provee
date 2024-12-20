@@ -99,6 +99,10 @@ export const routes: Routes = [
     component: SuccessComponent,
   },
   {
+    path: 'failure',
+    component: SuccessComponent,
+  },
+  {
     path: 'not-authorized',
     component: NotAuthorizedComponent,
   },
@@ -107,7 +111,6 @@ export const routes: Routes = [
     component: NotFoundComponent,
   },
 ];
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],

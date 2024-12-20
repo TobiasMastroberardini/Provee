@@ -1,5 +1,6 @@
 const mercadopago = require("mercadopago");
 const cartModel = require("../models/cartModel");
+const orderModel = require("../models/orderModel");
 
 // Asegúrate de que esta configuración se haga antes de utilizarla.
 mercadopago.configure({
@@ -37,7 +38,7 @@ const createPayment = async (req, res) => {
 
     // Preparar los items para Mercado Pago
     const items = cartItems.map((item) => ({
-      title: item.productName, // Asegúrate de utilizar el nombre correcto del campo
+      title: item.name, // Asegúrate de utilizar el nombre correcto del campo
       quantity: item.quantity,
       currency_id: "ARS",
       unit_price: parseFloat(item.price), // Asegúrate de que sea un número
@@ -69,15 +70,94 @@ const paymentSuccess = async (req, res) => {
   try {
     const { external_reference, status } = req.query;
 
-    if (status) {
-      if (status !== "approved") {
-        return res.redirect("http://localhost:4200/failureenelstatus");
-      }
+    // Verificar que el estado sea aprobado
+    if (status && status !== "approved") {
+      return res.redirect("http://localhost:4200/failureenelstatus");
     }
 
     const cart_id = parseInt(external_reference, 10);
 
-    // Vaciar el carrito
+    // Obtener los items del carrito antes de vaciarlo
+    const cartItems = await cartModel.getCartItems(cart_id);
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+      throw new Error("El carrito está vacío o no tiene items válidos.");
+    }
+
+    // Obtener el user_id a partir del cart_id
+    const user_id = await cartModel.getUserIdByCartId(cart_id);
+    if (!user_id) {
+      throw new Error("No se pudo obtener el user_id para el carrito.");
+    }
+
+    // Calcular el total de la orden, asegurando que 'price' sea un número
+    const total = cartItems.reduce((sum, item) => {
+      let price = item.price;
+
+      // Asegurarse de que 'price' sea un número
+      if (typeof price === "string") {
+        price = parseFloat(price); // Convertirlo si es una cadena de texto
+      }
+
+      if (isNaN(price)) {
+        throw new Error(
+          `El precio del item con id ${item.productId} no es válido.`
+        );
+      }
+
+      return sum + item.quantity * price; // Calcular el total
+    }, 0);
+
+    // Crear la orden
+    const orderId = await orderModel.createOrder({
+      user_id,
+      total,
+      estado: "pagado", // Ajustar según corresponda
+      direccion_envio: "Dirección de ejemplo", // Ajustar según tu lógica
+      metodo_pago: "tarjeta", // Ajustar según corresponda
+    });
+
+    // Crear los items de la orden
+    for (const item of cartItems) {
+      // Validación adicional para asegurarse de que los datos del item estén completos
+      if (!item.product_id || !item.quantity || item.price === undefined) {
+        console.error("Datos inválidos para el item del carrito:", item);
+        throw new Error(
+          "Los datos del carrito están incompletos o son inválidos."
+        );
+      }
+
+      // Asegurarse de que 'price' sea un número
+      let price = item.price;
+      if (typeof price === "string") {
+        price = parseFloat(price); // Convertirlo si es una cadena de texto
+      }
+      if (isNaN(price)) {
+        console.error("Precio no válido para el item del carrito:", item);
+        throw new Error("El precio del producto no es válido.");
+      }
+
+      // Verificar que la cantidad sea válida (número positivo)
+      if (item.quantity <= 0 || isNaN(item.quantity)) {
+        console.error("Cantidad no válida para el item del carrito:", item);
+        throw new Error("La cantidad del producto no es válida.");
+      }
+
+      console.log("Creando order_item con datos:", {
+        order_id: orderId,
+        product_id: item.product_id,
+        cantidad: item.quantity,
+        precio_unitario: price, // Usar el precio convertido
+      });
+
+      await orderModel.createOrderItem({
+        order_id: orderId,
+        product_id: item.product_id,
+        cantidad: item.quantity,
+        precio_unitario: price, // Precio formateado
+      });
+    }
+
+    // Vaciar el carrito después de crear la orden y los items
     const result = await cartModel.clearCart(cart_id);
     if (result) {
       console.log(`Carrito con ID ${cart_id} vaciado correctamente.`);

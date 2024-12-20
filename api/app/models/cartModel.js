@@ -109,7 +109,14 @@ class Cart {
         "SELECT * FROM cart_items WHERE cart_id = ?",
         [id]
       );
-      return rows;
+
+      // Convertir el precio a un número en cada item del carrito
+      const itemsWithNumericPrice = rows.map((item) => ({
+        ...item,
+        price: parseFloat(item.price), // Convierte el precio a número
+      }));
+
+      return itemsWithNumericPrice;
     } catch (error) {
       throw error;
     }
@@ -186,6 +193,41 @@ class Cart {
       return rows[0]; // Retorna el primer resultado (el ID del carrito)
     } catch (error) {
       throw error; // Maneja errores si la consulta falla
+    }
+  }
+
+  static async updateItemQuantity(item_id, quantity) {
+    try {
+      const [result] = await db.query(
+        "UPDATE cart_items SET quantity = ? WHERE id = ?",
+        [quantity, item_id]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getItemByProductIdAndCartId(product_id, cart_id) {
+    try {
+      const [rows] = await db.query(
+        "SELECT * FROM cart_items WHERE product_id = ? AND cart_id = ?",
+        [product_id, cart_id]
+      );
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getUserIdByCartId(id) {
+    try {
+      const [rows] = await db.query("SELECT user_id FROM cart WHERE id = ?", [
+        id,
+      ]);
+      return rows[0].user_id; // Devuelve el primer resultado, que será el `user_id`
+    } catch (error) {
+      throw error;
     }
   }
 }
