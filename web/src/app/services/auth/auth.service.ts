@@ -83,9 +83,7 @@ export class AuthService {
 
     const headers = { Authorization: `Bearer ${token}` }; // Agrega el token como encabezado
     return this.http.get<any>(`${this.baseUrl}/token`, { headers }).pipe(
-      tap((user) => {
-        console.log('Usuario autenticado:', user);
-      }),
+      tap((user) => {}),
       catchError((error) => {
         console.error('Error al obtener usuario:', error);
         return of(null); // Retorna un Observable vacío en caso de error
@@ -93,7 +91,7 @@ export class AuthService {
     );
   }
 
-  isLogged(): boolean {
+  isLogged() {
     return !!this.getToken();
   }
 

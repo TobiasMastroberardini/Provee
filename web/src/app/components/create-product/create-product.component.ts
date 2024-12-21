@@ -76,7 +76,6 @@ export class CreateProductComponent implements OnInit {
     // Enviar los datos al servicio
     this.productService.createProduct(formData).subscribe(
       (response) => {
-        console.log('Producto creado', response);
         this.toggleModal(); // Cerrar el modal
         this.productTable.fetchProducts();
       },

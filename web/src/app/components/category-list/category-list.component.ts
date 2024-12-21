@@ -50,7 +50,6 @@ export class CategoryListComponent implements OnInit {
   fetchByFilter(filter: string): void {
     this.categoriesService.getByFilter(filter).subscribe(
       (data) => {
-        console.log(`Fetched categories with filter ${filter}:`, data);
         this.categories = data;
       },
       (error) => {
@@ -72,12 +71,9 @@ export class CategoryListComponent implements OnInit {
     ) {
       this.categoriesService.delete(category.id).subscribe(
         () => {
-          console.log('id:' + category.id);
           this.loadCategories(); // Volver a cargar las categorias después de eliminar
         },
         (error) => {
-          console.log('id:' + category.id);
-
           console.error('Error al eliminar la categoria', error);
         }
       );

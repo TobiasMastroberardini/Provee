@@ -22,9 +22,7 @@ export class ProductCardComponent {
     const id = product.id;
 
     this.cartService.addToCart(id, quantity, price, name).subscribe(
-      (response) => {
-        console.log('Producto agregado al carrito:', response);
-      },
+      (response) => {},
       (error) => {
         console.error(
           'Error en la tarjeta al agregar producto al carrito:',

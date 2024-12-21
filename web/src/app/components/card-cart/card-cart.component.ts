@@ -51,13 +51,7 @@ export class CardCartComponent {
   updateItemQuantity(item: any): void {
     this.cartService
       .updateQuantity(item.id, item.quantity)
-      .subscribe((response) => {
-        if (response) {
-          console.log('Cantidad actualizada en el servicio:', response);
-        } else {
-          console.error('Error al actualizar la cantidad');
-        }
-      });
+      .subscribe((response) => {});
   }
 
   deleteItem(item: any): void {
@@ -66,7 +60,6 @@ export class CardCartComponent {
     // Eliminar el ítem del carrito
     this.cartService.deleteFromCart(itemId).subscribe(
       (response) => {
-        console.log('Producto eliminado del carrito:', response);
         this.itemDeleted.emit(itemId); // Emitir el ID del ítem eliminado al componente padre
       },
       (error) => {

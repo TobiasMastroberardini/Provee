@@ -46,7 +46,6 @@ export class CartService {
           return of([]); // Retorna un Observable vacío si no hay userId
         }
         return this.http.get<any[]>(`${this.baseUrl}/${userId}/items`).pipe(
-          tap((items) => console.log('Items del carrito obtenidos:', items)),
           catchError((error) => {
             console.error('Error obteniendo items del carrito:', error);
             return of([]);
@@ -81,8 +80,6 @@ export class CartService {
       price,
       name,
     };
-
-    console.log('Payload enviado al backend:', payload);
 
     return this.http.post<any>(`${this.baseUrl}/add`, payload).pipe(
       tap(() => {
@@ -132,7 +129,7 @@ export class CartService {
     }
 
     return this.http.delete<any>(`${this.baseUrl}/${itemId}/items`).pipe(
-      tap(() => console.log('Item eliminado del carrito:', itemId)),
+      tap(() => {}),
       catchError((error) => {
         console.error('Error al eliminar item del carrito:', error);
         return of(null);
@@ -142,7 +139,6 @@ export class CartService {
 
   createPayment(): Observable<any> {
     const body = { user_id: this.userId$.value };
-    console.log('llego hasta aca');
     return this.http.post<any>(`${this.baseUrlPay}/new`, body);
   }
 }

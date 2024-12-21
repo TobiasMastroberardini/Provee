@@ -18,7 +18,6 @@ export class InputAdminComponent {
   // Función para actualizar la URL con el valor del input de búsqueda
   updateUrl(): void {
     if (this.searchQuery) {
-      console.log('esta es: ', this.search);
       // Navegar a la ruta /products con el parámetro query `nombre`
       this.router.navigate([this.search], {
         queryParams: { nombre: this.searchQuery },

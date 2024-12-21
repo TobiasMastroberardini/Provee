@@ -26,7 +26,6 @@ export class EditCategoryComponent implements OnInit {
         next: (data) => {
           if (data) {
             this.category = data;
-            console.log('asi es la categoria: ', this.category);
           } else {
             console.error('Categoría no encontrada');
             this.router.navigate(['/category-list']);

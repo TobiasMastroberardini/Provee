@@ -29,7 +29,6 @@ export class SingupComponent {
       direccion: this.direccion,
       password: this.password,
     };
-    console.log(user);
     this.authService.register(user).subscribe((data) => {
       this.authService.setToken(data.token);
     });

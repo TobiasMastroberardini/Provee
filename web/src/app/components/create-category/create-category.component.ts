@@ -31,7 +31,6 @@ export class CreateCategoryComponent {
 
     this.categoriesService.create(categoryData).subscribe(
       (response) => {
-        console.log('Categoría creada con éxito', response);
         this.toggleModal(); // Cerrar el modal
         this.CategoryList.loadCategories();
       },

@@ -50,7 +50,6 @@ export class CheckoutFormComponent {
 
   onSubmit() {
     if (this.checkoutForm.valid) {
-      console.log('Formulario enviado:', this.checkoutForm.value);
       this.cartService.createPayment().subscribe(
         (response) => {
           window.location.href = response.init_point; // Redirige a la URL de Mercado Pago

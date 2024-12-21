@@ -35,7 +35,6 @@ export class OrderListComponent implements OnInit {
     if (this.isLogged) {
       this.authService.isAdmin().subscribe((isAdmin) => {
         this.isAdmin = isAdmin;
-        console.log('Evaluado isAdmin:', isAdmin, this.isAdmin);
 
         // Cargar órdenes después de evaluar si es admin
         if (this.isAdmin) {

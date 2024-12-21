@@ -59,7 +59,6 @@ export class ProductListComponent implements OnInit {
             .map((segment) => segment.path)
             .join('/');
           if (currentPath === 'offers') {
-            console.log('Fetching products on sale');
             this.fetchByFilter('on_sale=1'); // Filtra por oferta
           } else {
             this.fetchProducts(); // Si no hay filtros, obtener todos los productos
@@ -93,7 +92,6 @@ export class ProductListComponent implements OnInit {
   fetchByFilter(filter: string): void {
     this.productService.getByFilter(filter).subscribe(
       (data) => {
-        console.log(`Fetched products with filter ${filter}:`, data);
         this.products = data;
       },
       (error) => {

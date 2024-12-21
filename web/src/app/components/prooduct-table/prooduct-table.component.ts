@@ -62,7 +62,6 @@ export class ProductTableComponent implements OnInit {
   fetchByFilter(filter: string): void {
     this.productService.getByFilter(filter).subscribe(
       (data) => {
-        console.log(`Fetched products with filter ${filter}:`, data);
         this.products = data;
       },
       (error) => {
