@@ -2,19 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoriesService } from '../../services/categories/categories.service';
-import { AdminPanelComponent } from '../admin-panel/admin-panel.component';
 import { CreateCategoryComponent } from '../create-category/create-category.component';
 import { InputAdminComponent } from '../input-admin/input-admin.component';
 
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    CreateCategoryComponent,
-    AdminPanelComponent,
-    InputAdminComponent,
-  ],
+  imports: [CommonModule, CreateCategoryComponent, InputAdminComponent],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss',
 })
