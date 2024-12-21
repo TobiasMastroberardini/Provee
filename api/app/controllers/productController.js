@@ -95,9 +95,6 @@ class ProductController {
         });
       }
 
-      console.log(`Actualizando producto con ID: ${id}`);
-      console.log("Datos recibidos:", updatedData);
-
       // Actualizar los datos del producto
       const affectedRows = await Product.updateProduct(id, updatedData);
 
@@ -105,25 +102,16 @@ class ProductController {
         return res.status(404).json({ message: "Producto no encontrado" });
       }
 
-      console.log(`Producto ${id} actualizado correctamente.`);
-
       // Manejar imágenes si se han enviado
       if (images && Array.isArray(images) && images.length > 0) {
-        console.log(
-          `Procesando nuevas imágenes para el producto ${id}:`,
-          images
-        );
-
         // Obtener las rutas de las nuevas imágenes
         const imageUrls = images.map((file) => `/uploads/${file.filename}`);
 
         // Eliminar imágenes existentes del producto
         await Product.deleteProductImages(id);
-        console.log(`Imágenes existentes del producto ${id} eliminadas.`);
 
         // Insertar nuevas imágenes
         await Product.addProductImages(id, imageUrls);
-        console.log(`Nuevas imágenes asociadas al producto ${id}.`);
       }
 
       res.status(200).json({ message: "Producto actualizado correctamente" });

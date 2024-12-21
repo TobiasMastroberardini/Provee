@@ -4,8 +4,6 @@ const cartModel = require("../models/cartModel");
 
 const handleWebhook = async (req, res) => {
   try {
-    console.log("Notificación de Mercado Pago recibida:", req.query, req.body);
-
     const { topic, id } = req.query; // Para las query params
     const { type, data } = req.body; // Para el cuerpo JSON
 
@@ -21,12 +19,9 @@ const handleWebhook = async (req, res) => {
       );
 
       const merchantOrder = orderResponse.data;
-      console.log("Información de la Merchant Order:", merchantOrder);
 
       // Verifica si la orden fue pagada
       if (merchantOrder.order_status === "paid") {
-        console.log("Orden pagada correctamente.");
-
         // Procesar detalles del pago
         const payment = merchantOrder.payments.find(
           (pay) => pay.status === "approved"
@@ -49,15 +44,12 @@ const handleWebhook = async (req, res) => {
       );
 
       const paymentInfo = paymentResponse.data;
-      console.log("Información del pago:", paymentInfo);
 
       if (paymentInfo.status === "approved") {
-        console.log("Pago aprobado, procesando orden...");
         // Aquí puedes llamar a la función para manejar la orden
         await procesarOrdenDirecta(paymentInfo);
       }
     } else {
-      console.log("Tipo de evento no manejado:", topic || type);
       return res.status(400).send("Evento no manejado");
     }
 
@@ -108,14 +100,11 @@ const procesarOrden = async (merchantOrder, payment) => {
       precio_unitario: item.price,
     });
   }
-
-  console.log("Orden procesada exitosamente:", orderId);
 };
 
 // Función auxiliar para pagos directos
 const procesarOrdenDirecta = async (paymentInfo) => {
   // Simulación del procesamiento de la orden a partir del pago directo
-  console.log("Procesando orden directa para el pago:", paymentInfo.id);
 };
 
 module.exports = { handleWebhook };

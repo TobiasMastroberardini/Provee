@@ -55,18 +55,14 @@ class Auth {
     const { email, password } = req.body;
 
     try {
-      console.log("Datos recibidos:", req.body);
-
       // Buscar el usuario por el email
       const user = await userModel.getUserByEmail(email);
-      console.log("Usuario encontrado:", user);
 
       if (!user) {
         return res.status(404).json({ message: "Usuario no encontrado" });
       }
 
       // Verificar la contraseña
-      console.log("Verificando contraseña:", password, user.password);
       const isPasswordValid = await HandleBcrypt.compare(
         password,
         user.password

@@ -44,7 +44,6 @@ class CategoryController {
     const { id } = req.params;
     const updatedData = req.body;
     try {
-      console.log("el id recibido en el back: ", id);
       const result = await Category.updateCategory(id, updatedData);
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Categoria no encontrado" });

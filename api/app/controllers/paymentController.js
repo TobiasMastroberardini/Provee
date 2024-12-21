@@ -11,10 +11,7 @@ mercadopago.configure({
 
 const createPayment = async (req, res) => {
   try {
-    console.log(1);
-
     const { user_id } = req.body; // Suponiendo que el user_id viene en el cuerpo de la solicitud
-    console.log(2);
 
     // Obtener el ID del carrito
     const cartData = await cartModel.getCartIdByuserId(user_id);
@@ -23,18 +20,13 @@ const createPayment = async (req, res) => {
     }
 
     const cart_id = cartData.id; // Asegúrate de usar `id`, ya que retornas `rows[0]`
-    console.log("El cart_id: ", cart_id);
 
     // Obtener los items del carrito basado en cart_id
     const cartItems = await cartModel.getCartItems(cart_id);
-    console.log(3);
 
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
-      console.log(4);
       return res.status(400).json({ message: "El carrito está vacío." });
     }
-
-    console.log(5);
 
     // Preparar los items para Mercado Pago
     const items = cartItems.map((item) => ({
@@ -43,7 +35,6 @@ const createPayment = async (req, res) => {
       currency_id: "ARS",
       unit_price: parseFloat(item.price), // Asegúrate de que sea un número
     }));
-    console.log(6);
 
     const preference = {
       items: items,
@@ -55,7 +46,6 @@ const createPayment = async (req, res) => {
       auto_return: "approved",
       external_reference: String(cart_id), // Convertir a string
     };
-    console.log(7);
 
     // Crear preferencia de pago
     const response = await mercadopago.preferences.create(preference);
@@ -142,13 +132,6 @@ const paymentSuccess = async (req, res) => {
         throw new Error("La cantidad del producto no es válida.");
       }
 
-      console.log("Creando order_item con datos:", {
-        order_id: orderId,
-        product_id: item.product_id,
-        cantidad: item.quantity,
-        precio_unitario: price, // Usar el precio convertido
-      });
-
       await orderModel.createOrderItem({
         order_id: orderId,
         product_id: item.product_id,
@@ -160,7 +143,6 @@ const paymentSuccess = async (req, res) => {
     // Vaciar el carrito después de crear la orden y los items
     const result = await cartModel.clearCart(cart_id);
     if (result) {
-      console.log(`Carrito con ID ${cart_id} vaciado correctamente.`);
     } else {
       console.warn(`No se encontró el carrito con ID ${cart_id} para vaciar.`);
     }
