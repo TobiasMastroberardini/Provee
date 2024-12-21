@@ -113,7 +113,12 @@ class OrderModel {
   // Obtener los ítems de una orden por ID
   static async getOrderItems(order_id) {
     try {
-      const query = "SELECT * FROM order_items WHERE order_id = ?";
+      const query = `
+      SELECT oi.*, p.nombre AS product_name
+      FROM order_items oi
+      JOIN products p ON oi.product_id = p.id
+      WHERE oi.order_id = ?`;
+
       const [rows] = await db.query(query, [order_id]);
       return rows;
     } catch (error) {
@@ -123,7 +128,7 @@ class OrderModel {
   }
 
   // Obtener ítems de una orden por usuario
-  static async getOrderItemsByUser(user_id) {
+  static async getOrderByUser(user_id) {
     try {
       const query = "SELECT * FROM orders WHERE user_id = ?";
       const [rows] = await db.query(query, [user_id]);
@@ -133,6 +138,8 @@ class OrderModel {
       throw new Error("Error al obtener los ítems por usuario");
     }
   }
+
+  static async getOrdersByUser($user_id) {}
 }
 
 module.exports = OrderModel;

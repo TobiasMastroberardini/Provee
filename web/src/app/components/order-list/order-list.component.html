@@ -39,12 +39,6 @@
                 >
                   Ítems
                 </th>
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
-                >
-                  Acciones
-                </th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -62,10 +56,17 @@
                 </td>
                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                   <table class="min-w-full">
-                    <tr *ngFor="let item of order.items">
+                    <tr
+                      *ngFor="let item of order.items; let i = index"
+                      [ngClass]="i % 2 === 0 ? 'backg-light' : 'backg-dark'"
+                    >
+                      <td class="px-4 py-2">
+                        Id:
+                        <span class="bold-text">{{ item.id }}</span>
+                      </td>
                       <td class="px-4 py-2">
                         Producto:
-                        <span class="bold-text">{{ item.product_id }}</span>
+                        <span class="bold-text">{{ item.product_name }}</span>
                       </td>
                       <td class="px-4 py-2">
                         Cantidad:
@@ -79,10 +80,6 @@
                       </td>
                     </tr>
                   </table>
-                </td>
-
-                <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  <div class="flex items-center gap-x-6"></div>
                 </td>
               </tr>
             </tbody>

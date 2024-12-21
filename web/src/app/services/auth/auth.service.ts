@@ -19,7 +19,7 @@ export class AuthService {
   private baseUrl = 'http://localhost:3005/api/auth';
   private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged());
   isLogged$ = this.isLoggedSubject.asObservable();
-  private userId: number = -1;
+  userId: number = -1;
   constructor(
     private http: HttpClient,
     private alertService: AlertService,
@@ -93,7 +93,7 @@ export class AuthService {
     );
   }
 
-  isLogged() {
+  isLogged(): boolean {
     return !!this.getToken();
   }
 

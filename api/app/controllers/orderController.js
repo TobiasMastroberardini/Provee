@@ -43,10 +43,10 @@ class OrderController {
     }
   }
 
-  static async getOrderItemsByUser(req, res) {
+  static async getOrderByUser(req, res) {
     const { id } = req.params;
     try {
-      const items = await OrderModel.getOrderItemsByUser(id);
+      const items = await OrderModel.getOrderByUser(id);
       if (items.length === 0) {
         return res
           .status(404)

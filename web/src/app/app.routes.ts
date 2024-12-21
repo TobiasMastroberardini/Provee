@@ -19,6 +19,7 @@ import { RecoveryPassComponent } from './components/recovery-pass/recovery-pass.
 import { SingupComponent } from './components/singup/singup.component';
 import { SuccessComponent } from './components/success/success.component';
 import { AdminGuard } from './guard/admin/admin.guard';
+import { LoggedGuard } from './guard/logged/logged.guard';
 
 export const routes: Routes = [
   {
@@ -98,7 +99,7 @@ export const routes: Routes = [
   {
     path: 'order-list',
     component: OrderListComponent,
-    canActivate: [AdminGuard],
+    canActivate: [LoggedGuard],
   },
   {
     path: 'success',
