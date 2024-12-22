@@ -143,10 +143,15 @@ class Product {
     if (Object.keys(conditions).length > 0) {
       const whereClauses = Object.entries(conditions).map(
         ([key, value], index) => {
-          values.push(key === "nombre" ? `%${value}%` : value);
-          return key === "nombre"
-            ? `${key} LIKE $${index + 1}`
-            : `${key} = $${index + 1}`;
+          if (key === "nombre") {
+            // Aseguramos que los valores de "nombre" sean siempre con los comodines '%'
+            values.push(`%${value}%`);
+            return `${key} LIKE $${index + 1}`;
+          } else {
+            // Para otros parámetros no 'nombre', hacer comparación exacta
+            values.push(value);
+            return `${key} = $${index + 1}`;
+          }
         }
       );
 
@@ -154,9 +159,13 @@ class Product {
     }
 
     try {
+      // Ejecutar la consulta
       const { rows: products } = await db.query(query, values);
 
+      // Obtener imágenes asociadas a los productos
       const { rows: images } = await db.query("SELECT * FROM product_images");
+
+      // Mapear productos con sus imágenes
       return products.map((product) => ({
         ...product,
         images: images
