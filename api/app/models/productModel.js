@@ -144,11 +144,11 @@ class Product {
       const whereClauses = Object.entries(conditions).map(
         ([key, value], index) => {
           if (key === "nombre") {
-            // Aseguramos que los valores de "nombre" sean siempre con los comodines '%'
-            values.push(value); // Aquí ya estamos enviando el valor con los comodines
-            return `${key} LIKE $${index + 1}`; // Usamos LIKE para que busque coincidencias parciales
+            // Aseguramos que el valor de "nombre" sea insensible a mayúsculas y busque coincidencias parciales
+            values.push(`%${value}%`); // Agregamos los comodines '%' para coincidencias parciales
+            return `${key} ILIKE $${index + 1}`; // Usamos ILIKE para búsqueda insensible a mayúsculas
           } else {
-            // Para otros parámetros no 'nombre', hacer comparación exacta
+            // Para otros parámetros no 'nombre', hacemos comparación exacta
             values.push(value);
             return `${key} = $${index + 1}`;
           }
