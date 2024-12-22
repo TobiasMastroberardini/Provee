@@ -145,8 +145,8 @@ class Product {
         ([key, value], index) => {
           if (key === "nombre") {
             // Aseguramos que los valores de "nombre" sean siempre con los comodines '%'
-            values.push(`%${value}%`);
-            return `${key} LIKE $${index + 1}`;
+            values.push(value); // Aquí ya estamos enviando el valor con los comodines
+            return `${key} LIKE $${index + 1}`; // Usamos LIKE para que busque coincidencias parciales
           } else {
             // Para otros parámetros no 'nombre', hacer comparación exacta
             values.push(value);
