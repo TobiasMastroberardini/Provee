@@ -5,7 +5,7 @@ class OrderModel {
   static async getAll() {
     try {
       const query = "SELECT * FROM orders";
-      const [rows] = await db.query(query);
+      const { rows } = await db.query(query);
       return rows;
     } catch (error) {
       console.error("Error al obtener las órdenes:", error);
@@ -16,15 +16,16 @@ class OrderModel {
   // Obtener una orden por ID
   static async getById(id) {
     try {
-      const query = "SELECT * FROM orders WHERE id = ?";
-      const [rows] = await db.query(query, [id]);
-      return rows;
+      const query = "SELECT * FROM orders WHERE id = $1";
+      const { rows } = await db.query(query, [id]);
+      return rows[0]; // Devuelve la primera orden si existe
     } catch (error) {
       console.error("Error al obtener la orden:", error);
       throw new Error("Error al obtener la orden");
     }
   }
-  // Función estática para crear la orden
+
+  // Crear una nueva orden
   static async createOrder({
     user_id,
     total,
@@ -34,26 +35,31 @@ class OrderModel {
   }) {
     const query = `
       INSERT INTO orders (user_id, total, estado, direccion_envio, metodo_pago)
-      VALUES (?, ?, ?, ?, ?)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id
     `;
-    const [result] = await db.execute(query, [
-      user_id,
-      total,
-      estado,
-      direccion_envio,
-      metodo_pago,
-    ]);
-    return result.insertId; // Retorna el ID de la orden creada
+    try {
+      const { rows } = await db.query(query, [
+        user_id,
+        total,
+        estado,
+        direccion_envio,
+        metodo_pago,
+      ]);
+      return rows[0].id; // Retorna el ID de la orden creada
+    } catch (error) {
+      console.error("Error al crear la orden:", error);
+      throw new Error("Error al crear la orden");
+    }
   }
 
-  // Función estática para crear los detalles de la orden
+  // Crear los detalles de una orden
   static async createOrderItem({
     order_id,
     product_id,
     cantidad,
     precio_unitario,
   }) {
-    // Validar que todos los parámetros sean válidos
     if (
       !order_id ||
       !product_id ||
@@ -66,17 +72,12 @@ class OrderModel {
     }
 
     const query = `
-    INSERT INTO order_items (order_id, product_id, cantidad, precio_unitario)
-    VALUES (?, ?, ?, ?)
-  `;
+      INSERT INTO order_items (order_id, product_id, cantidad, precio_unitario)
+      VALUES ($1, $2, $3, $4)
+    `;
 
     try {
-      await db.execute(query, [
-        order_id,
-        product_id,
-        cantidad,
-        precio_unitario,
-      ]);
+      await db.query(query, [order_id, product_id, cantidad, precio_unitario]);
     } catch (error) {
       console.error("Error al insertar en order_items:", error);
       throw error;
@@ -85,14 +86,21 @@ class OrderModel {
 
   // Actualizar una orden por ID
   static async updateOrder(id, updatedData) {
+    const columns = Object.keys(updatedData)
+      .map((key, index) => `${key} = $${index + 1}`)
+      .join(", ");
+    const values = Object.values(updatedData);
+
+    const query = `
+      UPDATE orders
+      SET ${columns}
+      WHERE id = $${values.length + 1}
+      RETURNING *
+    `;
+
     try {
-      const query = `
-        UPDATE orders
-        SET ?
-        WHERE id = ?
-      `;
-      const [result] = await db.query(query, [updatedData, id]);
-      return result;
+      const { rows } = await db.query(query, [...values, id]);
+      return rows[0];
     } catch (error) {
       console.error("Error al actualizar la orden:", error);
       throw new Error("Error al actualizar la orden");
@@ -102,24 +110,25 @@ class OrderModel {
   // Eliminar una orden por ID
   static async deleteOrder(id) {
     try {
-      const query = "DELETE FROM orders WHERE id = ?";
-      const [result] = await db.query(query, [id]);
-      return result;
+      const query = "DELETE FROM orders WHERE id = $1";
+      const { rowCount } = await db.query(query, [id]);
+      return rowCount; // Devuelve el número de filas eliminadas
     } catch (error) {
       console.error("Error al eliminar la orden:", error);
       throw new Error("Error al eliminar la orden");
     }
   }
+
   // Obtener los ítems de una orden por ID
   static async getOrderItems(order_id) {
     try {
       const query = `
-      SELECT oi.*, p.nombre AS product_name
-      FROM order_items oi
-      JOIN products p ON oi.product_id = p.id
-      WHERE oi.order_id = ?`;
-
-      const [rows] = await db.query(query, [order_id]);
+        SELECT oi.*, p.nombre AS product_name
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        WHERE oi.order_id = $1
+      `;
+      const { rows } = await db.query(query, [order_id]);
       return rows;
     } catch (error) {
       console.error("Error al obtener los ítems de la orden:", error);
@@ -127,19 +136,20 @@ class OrderModel {
     }
   }
 
-  // Obtener ítems de una orden por usuario
+  // Obtener órdenes de un usuario
   static async getOrderByUser(user_id) {
     try {
-      const query = "SELECT * FROM orders WHERE user_id = ?";
-      const [rows] = await db.query(query, [user_id]);
+      const query = "SELECT * FROM orders WHERE user_id = $1";
+      const { rows } = await db.query(query, [user_id]);
       return rows;
     } catch (error) {
-      console.error("Error al obtener los ítems por usuario:", error);
-      throw new Error("Error al obtener los ítems por usuario");
+      console.error("Error al obtener las órdenes por usuario:", error);
+      throw new Error("Error al obtener las órdenes por usuario");
     }
   }
 
-  static async getOrdersByUser($user_id) {}
+  // Método duplicado, lo eliminé para mantener claridad.
+  // static async getOrdersByUser(user_id) { ... }
 }
 
 module.exports = OrderModel;

@@ -8,7 +8,7 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class ProductService {
-  private baseUrl = 'http://localhost:3005/api/products'; // Reemplaza con tu URL de API real
+  private baseUrl = 'https://provee.onrender.com/api/products'; // Reemplaza con tu URL de API real
 
   constructor(
     private http: HttpClient,

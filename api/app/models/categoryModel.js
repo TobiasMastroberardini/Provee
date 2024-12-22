@@ -3,7 +3,7 @@ const db = require("../../database/database");
 class Category {
   static async getAllCategories() {
     try {
-      const [rows] = await db.query("SELECT * FROM categories");
+      const { rows } = await db.query("SELECT * FROM categories");
       return rows;
     } catch (error) {
       throw error;
@@ -12,9 +12,10 @@ class Category {
 
   static async getCategoryById(id) {
     try {
-      const [rows] = await db.query("SELECT * FROM categories WHERE id = ?", [
-        id,
-      ]);
+      const { rows } = await db.query(
+        "SELECT * FROM categories WHERE id = $1",
+        [id]
+      );
       return rows[0];
     } catch (error) {
       throw error;
@@ -23,37 +24,40 @@ class Category {
 
   static async getCategoryByCondition(conditions) {
     try {
-      // Base de la consulta
       let query = "SELECT * FROM categories";
       const values = [];
 
-      // Añadir condiciones dinámicamente
       if (Object.keys(conditions).length > 0) {
-        const whereClauses = Object.entries(conditions).map(([key, value]) => {
-          if (key === "nombre") {
-            // Asegurarse de que se agreguen los comodines '%' para una búsqueda parcial
-            values.push(`%${value}%`); // Buscar coincidencias parciales
-            return `${key} LIKE ?`; // Usar LIKE en lugar de '='
+        const whereClauses = Object.entries(conditions).map(
+          ([key, value], index) => {
+            if (key === "nombre") {
+              values.push(`%${value}%`);
+              return `${key} LIKE $${index + 1}`;
+            }
+            values.push(value);
+            return `${key} = $${index + 1}`;
           }
-          values.push(value);
-          return `${key} = ?`;
-        });
+        );
         query += " WHERE " + whereClauses.join(" AND ");
       }
 
-      // Ejecutar la consulta para obtener los productos
-      const [categories] = await db.query(query, values);
-
-      return categories; // Devuelve los productos con sus imágenes
+      const { rows } = await db.query(query, values);
+      return rows;
     } catch (error) {
-      throw error; // Propaga el error al controlador
+      throw error;
     }
   }
 
   static async createCategory(data) {
     try {
-      const [result] = await db.query("INSERT INTO categories SET ?", data);
-      return result.insertId; // Devuelve el ID del nuevo producto
+      const columns = Object.keys(data).join(", ");
+      const values = Object.values(data);
+      const placeholders = values.map((_, index) => `$${index + 1}`).join(", ");
+
+      const query = `INSERT INTO categories (${columns}) VALUES (${placeholders}) RETURNING id`;
+
+      const { rows } = await db.query(query, values);
+      return rows[0].id; // Devuelve el ID de la nueva categoría
     } catch (error) {
       throw error;
     }
@@ -61,11 +65,15 @@ class Category {
 
   static async updateCategory(id, data) {
     try {
-      const [result] = await db.query("UPDATE categories SET ? WHERE id = ?", [
-        data,
-        id,
-      ]);
-      return result.affectedRows; // Devuelve el número de filas afectadas
+      const updates = Object.entries(data)
+        .map(([key, _], index) => `${key} = $${index + 1}`)
+        .join(", ");
+      const values = [...Object.values(data), id];
+
+      const query = `UPDATE categories SET ${updates} WHERE id = $${values.length}`;
+      const { rowCount } = await db.query(query, values);
+
+      return rowCount; // Devuelve el número de filas afectadas
     } catch (error) {
       throw error;
     }
@@ -73,7 +81,11 @@ class Category {
 
   static async deleteCategory(id) {
     try {
-      await db.query("DELETE FROM categories WHERE id = ?", [id]);
+      const { rowCount } = await db.query(
+        "DELETE FROM categories WHERE id = $1",
+        [id]
+      );
+      return rowCount; // Devuelve el número de filas afectadas
     } catch (error) {
       throw error;
     }
