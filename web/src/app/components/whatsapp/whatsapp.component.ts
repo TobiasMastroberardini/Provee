@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './whatsapp.component.scss',
 })
 export class WhatsappComponent {
-  phoneNumber: string = '1234567890'; // Reemplaza con el número de teléfono
+  phoneNumber: string = '2494219949'; // Reemplaza con el número de teléfono
 
   openWhatsApp(): void {
     const message = 'Hola, me gustaría obtener más información.'; // Mensaje predefinido
