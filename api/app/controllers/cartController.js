@@ -28,6 +28,10 @@ class CartController {
   static async getByUserId(req, res) {
     const { id } = req.params;
     try {
+      if (!id || isNaN(Number(id))) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+
       const userId = await Cart.getIdCartByUserId(id);
       const cart = await Cart.getCartByuserId(userId);
       if (cart.length === 0) {
