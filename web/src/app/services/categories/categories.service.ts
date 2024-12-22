@@ -8,7 +8,7 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class CategoriesService {
-  private apiUrl = 'http://localhost:3005/api/categories';
+  private apiUrl = 'https://provee.onrender.com/api/categories';
 
   constructor(
     private http: HttpClient,

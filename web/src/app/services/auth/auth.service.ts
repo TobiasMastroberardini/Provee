@@ -16,7 +16,7 @@ import { AlertService } from '../alert/alert.service';
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:3005/api/auth';
+  private baseUrl = 'https://provee.onrender.com/api/auth';
   private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged());
   isLogged$ = this.isLoggedSubject.asObservable();
   userId: number = -1;

@@ -7,7 +7,7 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class OrdersService {
-  private baseUrl = 'http://localhost:3005/api/orders'; // Cambia esta URL según tu configuración
+  private baseUrl = 'https://provee.onrender.com/api/orderss'; // Cambia esta URL según tu configuración
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
