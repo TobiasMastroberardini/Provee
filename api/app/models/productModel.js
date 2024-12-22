@@ -4,228 +4,167 @@ class Product {
   static async getPaginatedProducts(page, limit) {
     const offset = (page - 1) * limit;
 
-    // Consulta para obtener productos con el nombre de la categoría utilizando JOIN
     const query = `
-    SELECT p.*, c.nombre AS categoria_name, pi.imagen_url
-    FROM products p
-    LEFT JOIN categories c ON p.categoria_id = c.id
-    LEFT JOIN product_images pi ON p.id = pi.product_id
-    LIMIT ? OFFSET ?
-  `;
+      SELECT p.*, c.nombre AS categoria_name, 
+             COALESCE(json_agg(DISTINCT pi.imagen_url) FILTER (WHERE pi.imagen_url IS NOT NULL), '[]') AS images
+      FROM products p
+      LEFT JOIN categories c ON p.categoria_id = c.id
+      LEFT JOIN product_images pi ON p.id = pi.product_id
+      GROUP BY p.id, c.nombre
+      LIMIT $1 OFFSET $2
+    `;
 
     try {
-      // Obtener productos paginados con sus imágenes y categorías
-      const [result] = await db.query(query, [limit, offset]);
+      const { rows: products } = await db.query(query, [limit, offset]);
 
-      // Agrupar las imágenes de cada producto
-      const productsWithDetails = result.reduce((acc, product) => {
-        // Verificar si el producto ya existe en el acumulador
-        let existingProduct = acc.find((item) => item.id === product.id);
-
-        if (!existingProduct) {
-          // Si el producto no existe, crear uno nuevo y agregarlo
-          existingProduct = {
-            ...product,
-            images: [],
-          };
-          acc.push(existingProduct);
-        }
-
-        // Agregar la imagen del producto al campo 'images'
-        if (
-          product.imagen_url &&
-          !existingProduct.images.includes(product.imagen_url)
-        ) {
-          existingProduct.images.push(product.imagen_url);
-        }
-
-        return acc;
-      }, []);
-
-      // Contar el total de productos
-      const [totalResult] = await db.query(
-        "SELECT COUNT(*) AS total FROM products"
-      );
-      const totalProducts = totalResult[0].total;
+      const countQuery = "SELECT COUNT(*) AS total FROM products";
+      const { rows: totalResult } = await db.query(countQuery);
+      const totalProducts = parseInt(totalResult[0].total, 10);
 
       return {
-        data: productsWithDetails, // Devuelve los productos con sus imágenes y nombre de categoría
+        data: products,
         totalProducts,
         totalPages: Math.ceil(totalProducts / limit),
       };
     } catch (error) {
-      throw error; // Propaga el error al controlador
+      throw error;
     }
   }
 
   static async getAllProducts() {
-    try {
-      // Consulta para obtener todos los productos con el nombre de la categoría utilizando JOIN
-      const query = `
-      SELECT p.*, c.nombre AS categoria_name, pi.imagen_url
+    const query = `
+      SELECT p.*, c.nombre AS categoria_name,
+             COALESCE(json_agg(DISTINCT pi.imagen_url) FILTER (WHERE pi.imagen_url IS NOT NULL), '[]') AS images
       FROM products p
       LEFT JOIN categories c ON p.categoria_id = c.id
       LEFT JOIN product_images pi ON p.id = pi.product_id
+      GROUP BY p.id, c.nombre
     `;
 
-      const [result] = await db.query(query);
-
-      // Agrupar las imágenes de cada producto
-      const productsWithDetails = result.reduce((acc, product) => {
-        // Verificar si el producto ya existe en el acumulador
-        let existingProduct = acc.find((item) => item.id === product.id);
-
-        if (!existingProduct) {
-          // Si el producto no existe, crear uno nuevo y agregarlo
-          existingProduct = {
-            ...product,
-            images: [],
-          };
-          acc.push(existingProduct);
-        }
-
-        // Agregar la imagen del producto al campo 'images'
-        if (
-          product.imagen_url &&
-          !existingProduct.images.includes(product.imagen_url)
-        ) {
-          existingProduct.images.push(product.imagen_url);
-        }
-
-        return acc;
-      }, []);
-
-      return productsWithDetails; // Devuelve los productos con sus imágenes y nombre de categoría
+    try {
+      const { rows: products } = await db.query(query);
+      return products;
     } catch (error) {
-      throw error; // Propaga el error al controlador
+      throw error;
     }
   }
 
-  // Y en el método getProductById
   static async getProductById(id) {
-    try {
-      // Consulta para obtener el producto
-      const [productRows] = await db.query(
-        "SELECT * FROM products WHERE id = ?",
-        [id]
-      );
+    const productQuery = "SELECT * FROM products WHERE id = $1";
+    const imagesQuery =
+      "SELECT imagen_url FROM product_images WHERE product_id = $1";
 
-      // Si no se encuentra el producto, devolver undefined
+    try {
+      const { rows: productRows } = await db.query(productQuery, [id]);
+
       if (productRows.length === 0) {
         return undefined;
       }
 
       const product = productRows[0];
+      const { rows: imageRows } = await db.query(imagesQuery, [id]);
 
-      // Consulta para obtener las imágenes del producto
-      const [imageRows] = await db.query(
-        "SELECT imagen_url FROM product_images WHERE product_id = ?",
-        [id] // Cambiado de product_id a id
-      );
-
-      // Añadir las imágenes al producto
-      product.images = imageRows.map((row) => row.imagen_url); // Cambia a imagen_url
-
-      return product; // Devuelve el producto con las imágenes asociadas
+      product.images = imageRows.map((row) => row.imagen_url);
+      return product;
     } catch (error) {
       throw error;
     }
   }
-  // Crear un producto nuevo
+
   static async createProduct(data) {
+    const columns = Object.keys(data).join(", ");
+    const values = Object.values(data);
+    const placeholders = values.map((_, index) => `$${index + 1}`).join(", ");
+
+    const query = `INSERT INTO products (${columns}) VALUES (${placeholders}) RETURNING id`;
+
     try {
-      const [result] = await db.query("INSERT INTO products SET ?", data);
-      return result.insertId; // Devuelve el ID del nuevo producto
+      const { rows } = await db.query(query, values);
+      return rows[0].id;
     } catch (error) {
       throw error;
     }
   }
 
   static async updateProduct(id, data) {
+    const updates = Object.entries(data)
+      .map(([key, _], index) => `${key} = $${index + 1}`)
+      .join(", ");
+    const values = [...Object.values(data), id];
+
+    const query = `UPDATE products SET ${updates} WHERE id = $${values.length}`;
+
     try {
-      const [result] = await db.query("UPDATE products SET ? WHERE id = ?", [
-        data,
-        id,
-      ]);
-      return result.affectedRows; // Devuelve el número de filas afectadas
+      const { rowCount } = await db.query(query, values);
+      return rowCount;
     } catch (error) {
       throw error;
     }
   }
 
-  // Eliminar las imágenes de un producto
-  static async deleteProductImages(productId) {
-    try {
-      await db.query("DELETE FROM product_images WHERE product_id = ?", [
-        productId,
-      ]);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Agregar imágenes a un producto
-  static async addProductImages(productId, imageUrls) {
-    try {
-      const values = imageUrls.map((url) => [productId, url]);
-      await db.query(
-        "INSERT INTO product_images (product_id, imagen_url) VALUES ?",
-        [values]
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Eliminar un producto por su ID
   static async deleteProduct(id) {
+    const query = "DELETE FROM products WHERE id = $1";
+
     try {
-      const [result] = await db.query("DELETE FROM products WHERE id = ?", [
-        id,
-      ]);
-      return result.affectedRows; // Devuelve el número de filas afectadas
+      const { rowCount } = await db.query(query, [id]);
+      return rowCount;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteProductImages(productId) {
+    const query = "DELETE FROM product_images WHERE product_id = $1";
+
+    try {
+      await db.query(query, [productId]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async addProductImages(productId, imageUrls) {
+    const values = imageUrls
+      .map((url, index) => `($1, $${index + 2})`)
+      .join(", ");
+    const query = `INSERT INTO product_images (product_id, imagen_url) VALUES ${values}`;
+
+    try {
+      await db.query(query, [productId, ...imageUrls]);
     } catch (error) {
       throw error;
     }
   }
 
   static async getProductsByCondition(conditions) {
+    let query = "SELECT * FROM products";
+    const values = [];
+
+    if (Object.keys(conditions).length > 0) {
+      const whereClauses = Object.entries(conditions).map(
+        ([key, value], index) => {
+          values.push(key === "nombre" ? `%${value}%` : value);
+          return key === "nombre"
+            ? `${key} LIKE $${index + 1}`
+            : `${key} = $${index + 1}`;
+        }
+      );
+
+      query += " WHERE " + whereClauses.join(" AND ");
+    }
+
     try {
-      // Base de la consulta
-      let query = "SELECT * FROM products";
-      const values = [];
+      const { rows: products } = await db.query(query, values);
 
-      // Añadir condiciones dinámicamente
-      if (Object.keys(conditions).length > 0) {
-        const whereClauses = Object.entries(conditions).map(([key, value]) => {
-          if (key === "nombre") {
-            // Asegurarse de que se agreguen los comodines '%' para una búsqueda parcial
-            values.push(`%${value}%`); // Buscar coincidencias parciales
-            return `${key} LIKE ?`; // Usar LIKE en lugar de '='
-          }
-          values.push(value);
-          return `${key} = ?`;
-        });
-        query += " WHERE " + whereClauses.join(" AND ");
-      }
-
-      // Ejecutar la consulta para obtener los productos
-      const [products] = await db.query(query, values);
-
-      // Consulta para obtener todas las imágenes
-      const [images] = await db.query("SELECT * FROM product_images");
-
-      // Añadir imágenes a sus productos correspondientes
-      const productsWithImages = products.map((product) => {
-        const productImages = images
+      const { rows: images } = await db.query("SELECT * FROM product_images");
+      return products.map((product) => ({
+        ...product,
+        images: images
           .filter((image) => image.product_id === product.id)
-          .map((image) => image.imagen_url); // Cambia a imagen_url
-        return { ...product, images: productImages };
-      });
-
-      return productsWithImages; // Devuelve los productos con sus imágenes
+          .map((image) => image.imagen_url),
+      }));
     } catch (error) {
-      throw error; // Propaga el error al controlador
+      throw error;
     }
   }
 }
