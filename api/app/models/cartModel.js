@@ -25,7 +25,7 @@ class Cart {
         "SELECT id FROM cart WHERE user_id = $1",
         [user_id]
       );
-      return rows.map((row) => row.id); // Devuelve una lista de IDs
+      return rows; // Devuelve un array de objetos con { id }
     } catch (error) {
       throw error;
     }
