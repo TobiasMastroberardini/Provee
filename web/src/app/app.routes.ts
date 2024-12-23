@@ -104,10 +104,12 @@ export const routes: Routes = [
   {
     path: 'success',
     component: SuccessComponent,
+    data: { success: true },
   },
   {
     path: 'failure',
     component: SuccessComponent,
+    data: { success: false },
   },
   {
     path: 'not-authorized',
