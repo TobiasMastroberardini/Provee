@@ -39,8 +39,9 @@ const createPayment = async (req, res) => {
     const preference = {
       items: items,
       back_urls: {
-        success: "http://localhost:3005/api/payment/success",
-        failure: "http://localhost:4200/failuresape",
+        success: "https://provee.onrender.com/api/payment/success",
+        failure:
+          "https://provee-6qht0e6k3-tobiasmastroberardinis-projects.vercel.app/failure",
         pending: "http://localhost:4200/pending",
       },
       auto_return: "approved",
@@ -62,7 +63,9 @@ const paymentSuccess = async (req, res) => {
 
     // Verificar que el estado sea aprobado
     if (status && status !== "approved") {
-      return res.redirect("http://localhost:4200/failureenelstatus");
+      return res.redirect(
+        "https://provee-6qht0e6k3-tobiasmastroberardinis-projects.vercel.app/failure"
+      );
     }
 
     const cart_id = parseInt(external_reference, 10);
@@ -148,10 +151,14 @@ const paymentSuccess = async (req, res) => {
     }
 
     // Redirigir al frontend
-    return res.redirect("http://localhost:4200/success");
+    return res.redirect(
+      "https://provee-6qht0e6k3-tobiasmastroberardinis-projects.vercel.app/success"
+    );
   } catch (error) {
     console.error("Error al procesar el éxito del pago:", error);
-    return res.redirect("http://localhost:4200/failure");
+    return res.redirect(
+      "https://provee-6qht0e6k3-tobiasmastroberardinis-projects.vercel.app/failure"
+    );
   }
 };
 
