@@ -193,6 +193,18 @@ class Cart {
       throw error;
     }
   }
+
+  static async deleteCartItembyProductId(id) {
+    try {
+      const result = await pool.query(
+        "DELETE FROM cart_items WHERE product_id = $1",
+        [id]
+      );
+      return result.rowCount;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Cart;

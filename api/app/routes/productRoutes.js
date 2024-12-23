@@ -24,6 +24,14 @@ router.post(
   ProductController.create
 );
 
+// Ruta protegida para eliminar productos (solo admin)
+router.delete(
+  "/delete/:id",
+  AuthMiddleware.verifyToken, // Verificar si el usuario está autenticado
+  AuthMiddleware.isAdmin, // Verificar si el usuario es admin
+  ProductController.delete
+);
+
 // Ruta protegida para actualizar productos con imágenes
 router.put(
   "/:id",
@@ -31,14 +39,6 @@ router.put(
   AuthMiddleware.isAdmin,
   uploadMiddleware.array("images", 5),
   ProductController.update
-);
-
-// Ruta protegida para eliminar productos (solo admin)
-router.delete(
-  "/:id",
-  AuthMiddleware.verifyToken, // Verificar si el usuario está autenticado
-  AuthMiddleware.isAdmin, // Verificar si el usuario es admin
-  ProductController.delete
 );
 
 module.exports = router;

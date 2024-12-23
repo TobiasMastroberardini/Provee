@@ -131,6 +131,7 @@ class ProductController {
     try {
       const images = await Product.deleteProductImages(id);
       const affectedRows = await Product.deleteProduct(id);
+      const cartItem = await Cart.deleteCartItem(id);
       if (affectedRows === 0) {
         return res.status(404).json({ message: "Producto no encontrado" });
       }
