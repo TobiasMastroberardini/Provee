@@ -5,19 +5,23 @@ class Product {
     const offset = (page - 1) * limit;
 
     const query = `
-      SELECT p.*, c.nombre AS categoria_name, 
-             COALESCE(json_agg(DISTINCT pi.imagen_url) FILTER (WHERE pi.imagen_url IS NOT NULL), '[]') AS images
-      FROM products p
-      LEFT JOIN categories c ON p.categoria_id = c.id
-      LEFT JOIN product_images pi ON p.id = pi.product_id
-      GROUP BY p.id, c.nombre
-      LIMIT $1 OFFSET $2
-    `;
+    SELECT p.*, 
+           c.nombre AS categoria_name, 
+           COALESCE(json_agg(DISTINCT pi.imagen_url) FILTER (WHERE pi.imagen_url IS NOT NULL), '[]') AS images
+    FROM products p
+    LEFT JOIN categories c ON p.categoria_id = c.id
+    LEFT JOIN product_images pi ON p.id = pi.product_id
+    WHERE p.eliminado = false
+    GROUP BY p.id, c.nombre
+    LIMIT $1 OFFSET $2
+  `;
 
     try {
       const { rows: products } = await db.query(query, [limit, offset]);
 
-      const countQuery = "SELECT COUNT(*) AS total FROM products";
+      // Consulta de conteo, ahora incluye la condición de eliminado = false
+      const countQuery =
+        "SELECT COUNT(*) AS total FROM products WHERE eliminado = false";
       const { rows: totalResult } = await db.query(countQuery);
       const totalProducts = parseInt(totalResult[0].total, 10);
 
@@ -140,29 +144,25 @@ class Product {
     let query = "SELECT * FROM products";
     const values = [];
 
+    query += " WHERE eliminado = false";
     if (Object.keys(conditions).length > 0) {
       const whereClauses = Object.entries(conditions).map(
         ([key, value], index) => {
           if (key === "nombre") {
-            // Aseguramos que el valor de "nombre" sea insensible a mayúsculas y busque coincidencias parciales
-            values.push(`%${value}%`); // Agregamos los comodines '%' para coincidencias parciales
-            return `${key} ILIKE $${index + 1}`; // Usamos ILIKE para búsqueda insensible a mayúsculas
+            values.push(`%${value}%`);
+            return `${key} ILIKE $${index + 1}`;
           } else {
-            // Para otros parámetros no 'nombre', hacemos comparación exacta
             values.push(value);
             return `${key} = $${index + 1}`;
           }
         }
       );
-
-      query += " WHERE " + whereClauses.join(" AND ");
+      query += " AND " + whereClauses.join(" AND ");
     }
 
     try {
-      // Ejecutar la consulta
       const { rows: products } = await db.query(query, values);
 
-      // Obtener imágenes asociadas a los productos
       const { rows: images } = await db.query("SELECT * FROM product_images");
 
       // Mapear productos con sus imágenes
