@@ -227,7 +227,7 @@ class CartController {
     }
 
     try {
-      const result = await Cart.updateItems(id, updatedData.quantity);
+      const result = await Cart.updateItemQuantity(id, updatedData.quantity);
 
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Item no encontrado" });
