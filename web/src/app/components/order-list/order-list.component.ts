@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
 import { OrdersService } from '../../services/orders/orders.service';
+import { NotAuthorizedComponent } from '../not-authorized/not-authorized.component';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NotAuthorizedComponent],
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.scss',
 })

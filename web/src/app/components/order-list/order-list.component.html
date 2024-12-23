@@ -4,7 +4,9 @@
     <h2 class="text-lg font-medium text-gray-800">LISTA DE ÓRDENES</h2>
   </div>
 
-  <div *ngIf="loading" class="text-center mt-4">Cargando órdenes...</div>
+  <div *ngIf="loading" class="text-center mt-4">
+    <app-not-authorized></app-not-authorized>
+  </div>
   <div *ngIf="!loading && orders.length === 0" class="text-center mt-4">
     No hay órdenes disponibles.
   </div>
