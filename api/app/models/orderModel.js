@@ -26,7 +26,7 @@ class OrderModel {
   }
 
   // Crear una nueva orden
-  static async createOrder({
+  static async create({
     user_id,
     total,
     estado,
