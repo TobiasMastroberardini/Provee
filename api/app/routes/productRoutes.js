@@ -26,7 +26,7 @@ router.post(
 
 // Ruta protegida para eliminar productos (solo admin)
 router.delete(
-  "/delete/:id",
+  "/:id",
   AuthMiddleware.verifyToken, // Verificar si el usuario está autenticado
   AuthMiddleware.isAdmin, // Verificar si el usuario es admin
   ProductController.delete
