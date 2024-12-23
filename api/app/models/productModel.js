@@ -107,7 +107,8 @@ class Product {
   }
 
   static async deleteProduct(id) {
-    const query = "DELETE FROM products WHERE id = $1";
+    // const query = "DELETE FROM products WHERE id = $1";
+    const query = "UPDATE products SET eliminado = true WHERE id = $1";
 
     try {
       const { rowCount } = await db.query(query, [id]);
