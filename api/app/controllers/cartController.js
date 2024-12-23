@@ -28,14 +28,20 @@ class CartController {
   static async getByUserId(req, res) {
     const { id } = req.params;
     try {
-      const userId = await Cart.getIdCartByUserId(id);
-      const cart = await Cart.getCartByuserId(userId);
+      if (!id || isNaN(Number(id))) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+
+      // Obtener el cart_id a partir del user_id
+      const cart = await Cart.getCartByuserId(id);
+
       if (cart.length === 0) {
         return res.status(404).json({ message: "Carrito no encontrado" });
       }
-      return res.json(cart[0]);
+
+      return res.json(cart[0]); // Retorna el primer carrito encontrado
     } catch (error) {
-      return req.status(500).json({ error: "Error al obtener carrito" });
+      return res.status(500).json({ error: "Error al obtener carrito" });
     }
   }
 
@@ -98,7 +104,9 @@ class CartController {
     const { product_id, quantity, price, name, userId } = req.body;
     try {
       // Obtener el cartId usando el userId
+      console.log("el idUSer: ", userId);
       const cart = await Cart.getIdCartByUserId(userId);
+      console.log("el cart: ", cart);
       if (!cart || cart.length === 0) {
         return res.status(404).json({ message: "Carrito no encontrado" });
       }

@@ -20,7 +20,7 @@ const pg = require("pg");
 
 const db = new pg.Pool({
   connectionString:
-    "postgresql://root:QeQ0Dt8gekYlYBcFs8WRZ76ucM7IB59t@dpg-ctjl0hl2ng1s73bkd0rg-a/ecommerce_cqz8",
+    "postgresql://root:QeQ0Dt8gekYlYBcFs8WRZ76ucM7IB59t@dpg-ctjl0hl2ng1s73bkd0rg-a.oregon-postgres.render.com/ecommerce_cqz8",
   ssl: {
     rejectUnauthorized: false, // Útil si el servidor PostgreSQL requiere SSL pero no tiene un certificado autorizado
   },
