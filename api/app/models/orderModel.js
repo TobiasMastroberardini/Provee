@@ -1,10 +1,19 @@
 const db = require("../../database/database");
 
 class OrderModel {
-  // Obtener todas las órdenes
+  // Obtener todas las órdenes con información del usuario
   static async getAll() {
     try {
-      const query = "SELECT * FROM orders";
+      const query = `
+      SELECT 
+        orders.*,
+        users.nombre AS user_name,
+        users.email AS user_email,
+        users.telefono AS user_phone,
+        users.direccion AS user_address
+      FROM orders
+      JOIN users ON orders.user_id = users.id
+    `;
       const { rows } = await db.query(query);
       return rows;
     } catch (error) {
@@ -13,10 +22,20 @@ class OrderModel {
     }
   }
 
-  // Obtener una orden por ID
+  // Obtener una orden por ID con información del usuario
   static async getById(id) {
     try {
-      const query = "SELECT * FROM orders WHERE id = $1";
+      const query = `
+      SELECT 
+        orders.*,
+        users.nombre AS user_name,
+        users.email AS user_email,
+        users.telefono AS user_phone,
+        users.direccion AS user_address
+      FROM orders
+      JOIN users ON orders.user_id = users.id
+      WHERE orders.id = $1
+    `;
       const { rows } = await db.query(query, [id]);
       return rows[0]; // Devuelve la primera orden si existe
     } catch (error) {
