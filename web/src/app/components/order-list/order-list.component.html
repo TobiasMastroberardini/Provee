@@ -27,6 +27,12 @@
                   scope="col"
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
                 >
+                  Datos del comprador
+                </th>
+                <th
+                  scope="col"
+                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
+                >
                   Total
                 </th>
                 <th
@@ -50,6 +56,29 @@
                 >
                   {{ order.id }}
                 </td>
+                <td
+                  class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
+                >
+                  <ul class="space-y-1">
+                    <li>
+                      <span class="data-label">Nombre:</span>
+                      {{ order.user_name }}
+                    </li>
+                    <li>
+                      <span class="data-label">Teléfono:</span>
+                      {{ order.user_phone }}
+                    </li>
+                    <li>
+                      <span class="data-label">Email:</span>
+                      {{ order.user_email }}
+                    </li>
+                    <li>
+                      <span class="data-label">Dirección:</span>
+                      {{ order.user_address }}
+                    </li>
+                  </ul>
+                </td>
+
                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                   {{ order.total | currency }}
                 </td>
