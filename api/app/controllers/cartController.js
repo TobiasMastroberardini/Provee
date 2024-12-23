@@ -104,9 +104,7 @@ class CartController {
     const { product_id, quantity, price, name, userId } = req.body;
     try {
       // Obtener el cartId usando el userId
-      console.log("el idUSer: ", userId);
       const cart = await Cart.getIdCartByUserId(userId);
-      console.log("el cart: ", cart);
       if (!cart || cart.length === 0) {
         return res.status(404).json({ message: "Carrito no encontrado" });
       }
