@@ -97,8 +97,8 @@
                   {{ product.descripcion }}
                 </td>
                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                  <p *ngIf="product.on_sale === 0">No</p>
-                  <p *ngIf="product.on_sale === 1">Si</p>
+                  <p *ngIf="product.on_sale === true">No</p>
+                  <p *ngIf="product.on_sale === false">Si</p>
                 </td>
                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                   {{ product.categoria_name }}
