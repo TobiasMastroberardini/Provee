@@ -3,50 +3,73 @@ const Cart = require("../models/cartModel");
 const HandleBcrypt = require("../middlewares/handleBcrypt");
 const UserService = require("../services/userService");
 const jwt = require("jsonwebtoken");
+const pool = require("../../database/database.js");
 
 class Auth {
   // Método para registrar un usuario
   static async register(req, res) {
+    const client = await pool.connect();
     try {
+      await client.query("BEGIN"); // Iniciar la transacción
+
       const { nombre, email, password, direccion, telefono } = req.body;
+
+      // Validaciones de datos
+      if (!nombre || !email || !password || !direccion || !telefono) {
+        return res
+          .status(400)
+          .send({ error: "Todos los campos son obligatorios" });
+      }
 
       // Encriptar la contraseña
       const passwordHash = await HandleBcrypt.encrypt(password);
 
-      // Crear el usuario en la base de datos
-      const registerUser = await userModel.createUser({
-        nombre,
-        email,
-        password: passwordHash,
-        direccion,
-        telefono,
-      });
+      // Crear el usuario en la base de datos usando el client de la transacción
+      const registerUser = await userModel.createUser(
+        {
+          nombre,
+          email,
+          password: passwordHash,
+          direccion,
+          telefono,
+        },
+        client
+      );
 
-      // Crear el carrito para el usuario con el id del usuario registrado
+      // Crear el carrito para el usuario con el ID recién creado
       const newCart = {
-        user_id: registerUser.insertId, // Usamos el ID del usuario recién creado
-        status: "active", // El carrito puede ser 'active', 'completed' o 'abandoned', puedes ajustar según lo que necesites
+        user_id: registerUser.id, // Usamos el ID del usuario recién creado
+        created_at: new Date(), // Fecha de creación
+        updated_at: new Date(), // Fecha de actualización
+        status: "active", // El carrito puede estar 'active', 'completed' o 'abandoned'
       };
 
       // Inserta el carrito en la base de datos
-      const createdCart = await Cart.createCart(newCart);
+      const createdCart = await Cart.createCart(client, newCart);
+
+      // Hacer commit de la transacción si todo va bien
+      await client.query("COMMIT");
 
       // Enviar la respuesta con los datos del usuario y el carrito registrado
       res.status(201).send({
-        user: { id: registerUser.insertId, ...newCart },
+        user: registerUser,
         cart: createdCart,
       });
     } catch (error) {
-      // Manejo de errores
+      // Si algo falla, hacer rollback de la transacción
+      await client.query("ROLLBACK");
       console.error(error);
 
-      if (error.code === "ER_DUP_ENTRY") {
+      if (error.code === "23505") {
+        // Error en caso de correo duplicado
         return res
           .status(409)
           .send({ error: "El correo electrónico ya está registrado." });
       }
 
       res.status(500).send({ error: "Error al registrar el usuario" });
+    } finally {
+      client.release(); // Liberar la conexión
     }
   }
 

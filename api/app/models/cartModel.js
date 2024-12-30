@@ -42,15 +42,30 @@ class Cart {
     }
   }
 
-  static async createCart(data) {
+  static async createCart(client, data) {
     try {
-      const result = await pool.query(
-        "INSERT INTO cart (user_id, created_at, updated_at) VALUES ($1, $2, $3) RETURNING id",
-        [data.user_id, data.created_at, data.updated_at]
-      );
-      return result.rows[0]; // Retorna el carrito recién creado
+      // Validación de que `user_id` es un número válido
+      if (!data.user_id || typeof data.user_id !== "number") {
+        throw new Error("El ID del usuario debe ser un número válido.");
+      }
+
+      const query = `
+      INSERT INTO cart (user_id, created_at, updated_at, status)
+      VALUES ($1, $2, $3, $4)
+      RETURNING id;
+    `;
+
+      // Ejecutamos la consulta para insertar el carrito usando el client pasado
+      const { rows } = await client.query(query, [
+        data.user_id,
+        data.created_at,
+        data.updated_at,
+        data.status,
+      ]);
+
+      return rows[0]; // Retorna el carrito recién creado
     } catch (error) {
-      throw error;
+      throw error; // Re-lanzamos el error para que el controlador lo maneje
     }
   }
 

@@ -38,18 +38,20 @@ class User {
   }
 
   // Crear un nuevo usuario
-  static async createUser(data) {
-    try {
-      const columns = Object.keys(data).join(", ");
-      const values = Object.values(data);
-      const placeholders = values.map((_, i) => `$${i + 1}`).join(", ");
+  static async createUser(data, client = pool) {
+    const columns = Object.keys(data).join(", ");
+    const values = Object.values(data);
+    const placeholders = values.map((_, index) => `$${index + 1}`).join(", ");
 
-      const query = `INSERT INTO users (${columns}) VALUES (${placeholders}) RETURNING *`;
-      const { rows } = await db.query(query, values);
-      return rows[0]; // Retorna el usuario creado
+    // Consulta para insertar un nuevo usuario en la tabla "users"
+    const query = `INSERT INTO users (${columns}) VALUES (${placeholders}) RETURNING *`;
+
+    try {
+      // Ejecutamos la consulta para crear el usuario usando el client
+      const { rows } = await client.query(query, values);
+      return rows[0]; // Retorna el usuario recién creado
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      throw new Error("Error al crear el usuario");
+      throw error; // Si hay un error, lo lanzamos para manejarlo en el controlador
     }
   }
 
