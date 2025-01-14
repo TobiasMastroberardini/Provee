@@ -44,7 +44,6 @@ class Cart {
 
   static async createCart(client, data) {
     try {
-      // Validación de que `user_id` es un número válido
       if (!data.user_id || typeof data.user_id !== "number") {
         throw new Error("El ID del usuario debe ser un número válido.");
       }
@@ -55,7 +54,6 @@ class Cart {
       RETURNING id;
     `;
 
-      // Ejecutamos la consulta para insertar el carrito usando el client pasado
       const { rows } = await client.query(query, [
         data.user_id,
         data.created_at,
@@ -65,7 +63,7 @@ class Cart {
 
       return rows[0]; // Retorna el carrito recién creado
     } catch (error) {
-      throw error; // Re-lanzamos el error para que el controlador lo maneje
+      throw error;
     }
   }
 
@@ -179,7 +177,7 @@ class Cart {
         "SELECT id FROM cart WHERE user_id = $1 LIMIT 1",
         [user_id]
       );
-      return result.rows[0]; // Retorna el primer resultado (el ID del carrito)
+      return result.rows[0];
     } catch (error) {
       throw error;
     }
@@ -203,7 +201,7 @@ class Cart {
         "SELECT user_id FROM cart WHERE id = $1",
         [id]
       );
-      return result.rows[0].user_id; // Devuelve el user_id
+      return result.rows[0].user_id;
     } catch (error) {
       throw error;
     }

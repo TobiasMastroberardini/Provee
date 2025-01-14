@@ -9,10 +9,7 @@ router.post("/register", Auth.register);
 router.post("/login", Auth.login);
 
 // Ruta para cerrar sesión
-router.post("/logout", authMiddleware.verifyToken, Auth.logout); // Asegúrate de que el usuario esté autenticado
-
-// Ruta protegida
-// router.get("/protected", authMiddleware.verifyToken, Auth.protected); // Proteger la ruta
+router.post("/logout", authMiddleware.verifyToken, Auth.logout);
 
 router.get("/token", authMiddleware.verifyToken, Auth.getUserLogged);
 

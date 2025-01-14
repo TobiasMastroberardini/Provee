@@ -4,8 +4,8 @@ const cartModel = require("../models/cartModel");
 
 const handleWebhook = async (req, res) => {
   try {
-    const { topic, id } = req.query; // Para las query params
-    const { type, data } = req.body; // Para el cuerpo JSON
+    const { topic, id } = req.query;
+    const { type, data } = req.body;
 
     if (topic === "merchant_order" && id) {
       // Obtener información de la Merchant Order
@@ -100,11 +100,6 @@ const procesarOrden = async (merchantOrder, payment) => {
       precio_unitario: item.price,
     });
   }
-};
-
-// Función auxiliar para pagos directos
-const procesarOrdenDirecta = async (paymentInfo) => {
-  // Simulación del procesamiento de la orden a partir del pago directo
 };
 
 module.exports = { handleWebhook };

@@ -47,7 +47,6 @@ class Auth {
       // Inserta el carrito en la base de datos
       const createdCart = await Cart.createCart(client, newCart);
 
-      // Hacer commit de la transacción si todo va bien
       await client.query("COMMIT");
 
       // Enviar la respuesta con los datos del usuario y el carrito registrado
@@ -101,9 +100,9 @@ class Auth {
         return res.status(500).json({ message: "Error interno del servidor" });
       }
 
-      // Generar el token con id y rol
+      // Generar el token
       const token = jwt.sign(
-        { id: user.id, rol: user.rol }, // Incluye el rol
+        { id: user.id, rol: user.rol },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
@@ -115,7 +114,7 @@ class Auth {
         user: {
           id: user.id,
           email: user.email,
-          rol: user.rol, // Incluye el rol en la respuesta
+          rol: user.rol,
         },
       });
     } catch (error) {
@@ -126,7 +125,7 @@ class Auth {
 
   // Método para cerrar sesión
   static async logout(req, res) {
-    // Aquí no es necesario hacer nada en el servidor, solo devolvemos un mensaje
+    //solo devuelve un mensaje
     return res.status(200).json({ message: "Logout exitoso" });
   }
 
@@ -140,14 +139,14 @@ class Auth {
 
   static async getUserLogged(req, res) {
     try {
-      const userId = req.userId; // Se obtiene del middleware
+      const userId = req.userId;
       const user = await userModel.getUserById(userId); // Busca el usuario por su ID
 
       if (!user) {
         return res.status(404).json({ message: "Usuario no encontrado" });
       }
 
-      res.json(user); // Devuelve el usuario
+      res.json(user);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error al obtener el usuario" });

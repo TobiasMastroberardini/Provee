@@ -39,24 +39,24 @@ class CartController {
         return res.status(404).json({ message: "Carrito no encontrado" });
       }
 
-      return res.json(cart[0]); // Retorna el primer carrito encontrado
+      return res.json(cart[0]);
     } catch (error) {
       return res.status(500).json({ error: "Error al obtener carrito" });
     }
   }
 
   static async getIdCartByUser(req, res) {
-    const { id } = req.params; // Obtener el ID del usuario desde los parámetros de la solicitud
+    const { id } = req.params;
     try {
       const cart = await Cart.getIdCartByUserId(id); // Obtener el carrito por ID de usuario
       if (cart.length === 0) {
-        return res.sendStatus(404); // Enviar 404 si no hay carrito
+        return res.sendStatus(404);
       }
 
       // Enviar el ID del carrito encontrado como un número, en lugar de un JSON
       return res.send(cart[0].id.toString()); // Enviar el ID como respuesta (convertido a string)
     } catch (error) {
-      return res.status(500).json({ error: "Error al obtener carrito" }); // Enviar 500 en caso de error
+      return res.status(500).json({ error: "Error al obtener carrito" });
     }
   }
 
@@ -174,7 +174,7 @@ class CartController {
           .json({ message: "Carrito no encontrado para este usuario" });
       }
 
-      const cartId = cart[0].id; // Suponiendo que 'cart' es un array, accedemos al primer elemento.
+      const cartId = cart[0].id;
 
       // Obtener los items del carrito usando el cartId
       const items = await Cart.getCartItems(cartId);
@@ -219,7 +219,6 @@ class CartController {
       return res.status(400).json({ message: "ID inválido" });
     }
 
-    // Validación de datos actualizados, por ejemplo asegurando que hay un campo "quantity"
     if (typeof updatedData.quantity !== "number" || updatedData.quantity < 0) {
       return res
         .status(400)

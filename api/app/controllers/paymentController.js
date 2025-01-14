@@ -2,16 +2,13 @@ const mercadopago = require("mercadopago");
 const cartModel = require("../models/cartModel");
 const orderModel = require("../models/orderModel");
 
-// Asegúrate de que esta configuración se haga antes de utilizarla.
 mercadopago.configure({
-  access_token:
-    process.env.MP_ACCESS_TOKEN ||
-    "APP_USR-4538150663921858-120518-9431b9a170a8ffa2d329754a9a67fa36-313525372", // Usa process.env para manejar el Access Token de forma segura
+  access_token: process.env.MP_ACCESS_TOKEN,
 });
 
 const createPayment = async (req, res) => {
   try {
-    const { user_id } = req.body; // Suponiendo que el user_id viene en el cuerpo de la solicitud
+    const { user_id } = req.body;
 
     // Obtener el ID del carrito
     const cartData = await cartModel.getCartIdByuserId(user_id);
@@ -19,7 +16,7 @@ const createPayment = async (req, res) => {
       return res.status(404).json({ message: "Carrito no encontrado." });
     }
 
-    const cart_id = cartData.id; // Asegúrate de usar `id`, ya que retornas `rows[0]`
+    const cart_id = cartData.id;
 
     // Obtener los items del carrito basado en cart_id
     const cartItems = await cartModel.getCartItems(cart_id);
@@ -30,10 +27,10 @@ const createPayment = async (req, res) => {
 
     // Preparar los items para Mercado Pago
     const items = cartItems.map((item) => ({
-      title: item.name, // Asegúrate de utilizar el nombre correcto del campo
+      title: item.name,
       quantity: item.quantity,
       currency_id: "ARS",
-      unit_price: parseFloat(item.price), // Asegúrate de que sea un número
+      unit_price: parseFloat(item.price),
     }));
 
     const preference = {
@@ -82,11 +79,9 @@ const paymentSuccess = async (req, res) => {
       throw new Error("No se pudo obtener el user_id para el carrito.");
     }
 
-    // Calcular el total de la orden, asegurando que 'price' sea un número
     const total = cartItems.reduce((sum, item) => {
       let price = item.price;
 
-      // Asegurarse de que 'price' sea un número
       if (typeof price === "string") {
         price = parseFloat(price); // Convertirlo si es una cadena de texto
       }
@@ -104,9 +99,9 @@ const paymentSuccess = async (req, res) => {
     const orderId = await orderModel.createOrder({
       user_id,
       total,
-      estado: "pagado", // Ajustar según corresponda
-      direccion_envio: "Dirección de ejemplo", // Ajustar según tu lógica
-      metodo_pago: "tarjeta", // Ajustar según corresponda
+      estado: "pagado",
+      direccion_envio: "Dirección de ejemplo",
+      metodo_pago: "tarjeta",
     });
 
     // Crear los items de la orden
@@ -139,7 +134,7 @@ const paymentSuccess = async (req, res) => {
         order_id: orderId,
         product_id: item.product_id,
         cantidad: item.quantity,
-        precio_unitario: price, // Precio formateado
+        precio_unitario: price,
       });
     }
 

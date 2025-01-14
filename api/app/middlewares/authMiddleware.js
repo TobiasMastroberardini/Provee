@@ -13,9 +13,9 @@ class authMiddleware {
         return res.status(401).json({ message: "Token inválido" });
       }
 
-      req.userId = decoded.id; // Almacena el id del usuario
-      req.rol = decoded.rol; // Almacena el rol del usuario
-      next(); // Pasa el control a la siguiente función
+      req.userId = decoded.id;
+      req.rol = decoded.rol;
+      next();
     });
   }
 
@@ -25,7 +25,7 @@ class authMiddleware {
         .status(403)
         .json({ message: "Acceso denegado: No eres administrador" });
     }
-    next(); // Continúa si el usuario es administrador
+    next();
   }
 
   static async validateEmail(req, res, next) {

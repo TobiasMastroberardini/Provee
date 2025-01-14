@@ -166,9 +166,6 @@ class OrderModel {
       throw new Error("Error al obtener las órdenes por usuario");
     }
   }
-
-  // Método duplicado, lo eliminé para mantener claridad.
-  // static async getOrdersByUser(user_id) { ... }
 }
 
 module.exports = OrderModel;
