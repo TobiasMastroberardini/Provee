@@ -1,9 +1,10 @@
 const mercadopago = require("mercadopago");
 const cartModel = require("../models/cartModel");
 const orderModel = require("../models/orderModel");
+require("dotenv").config();
 
 mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN,
+  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
 
 const createPayment = async (req, res) => {
