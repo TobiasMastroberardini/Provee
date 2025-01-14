@@ -1,10 +1,12 @@
 #carouselExampleIndicators,
 .carousel-inner {
   max-height: 100vh;
-  width: auto;
+  width: 100%; /* Asegura que el carrusel ocupe todo el ancho */
 }
+
 .carousel-inner img {
-  object-fit: cover; /* Mantiene el aspecto y llena el contenedor */
-  height: 100%; /* Hace que las imágenes ocupen toda la altura del carrusel */
+  object-fit: cover; /* Mantiene el aspecto de las imágenes */
   width: 100%; /* Hace que las imágenes ocupen todo el ancho */
+  height: auto; /* Permite que la altura se ajuste automáticamente según el ancho */
+  max-height: 100vh; /* Limita la altura máxima al 100% de la altura de la ventana */
 }
